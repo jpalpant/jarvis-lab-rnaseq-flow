@@ -1,0 +1,28 @@
+[1780:1796:1026/215727:INFO:AXMainLogic.cpp(1469)]START BACKUP
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1718)]Starting backup, volume \\?\Volume{fa590b5e-5988-11e5-8585-806e6f6e6963}
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1740)]    Parent file initial 
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1820)]    Backup file \\Mac\Home\36D575ACEDB976FD-20151026215727.axd
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1821)]    Parent file 
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1822)]    Description Automatic backup
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(1918)]CaptureThreadProc: CaptureMainVolume
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(2227)]Destination drive type = 1
+[1780:10488:1026/215727:INFO:AXCommonStuff.cpp(2702)]		AXCORE_MODULE: AX_CreateImageVolume: \\Mac\Home\36D575ACEDB976FD-20151026215727.axtemp, (null), \\?\Volume{fa590b5e-5988-11e5-8585-806e6f6e6963}
+[1780:10488:1026/215727:INFO:AXMainLogic.cpp(3178)]PREPARE
+[1780:10488:1026/215727:INFO:AXCommonStuff.cpp(2702)]		AXCORE_MODULE: ResetProfileBitmapData llFullBitmapSize = 170737664
+[1780:10488:1026/215732:ERROR:AXCommonStuff.cpp(2696)]		AXCORE_MODULE: Snapshot.cpp(951): Error = 0xC1000006  WinError = 0x80042306
+[1780:10488:1026/215732:ERROR:AXCommonStuff.cpp(2696)]		AXCORE_MODULE: CreateSnapshot - ERROR 0
+[1780:10488:1026/215734:ERROR:AXMainLogic.cpp(2105)]CaptureThreadProc: AX_CreateImageVolume error 0x0 Win error 80042306
+[1780:10488:1026/215734:ERROR:AXMainLogic.cpp(2254)]AX_CreateImageVolume error 0xc1000006 Win error 80042306
+[1780:10488:1026/215734:INFO:AXMainLogic.cpp(2258)]AX_CreateImageVolume Deleting file \\Mac\Home\36D575ACEDB976FD-20151026215727.axtemp
+[1780:10488:1026/215734:ERROR:AXMainLogic.cpp(2004)]Recording backup error 0xc1000006 Win code 80042306
+[1780:10488:1026/215734:ERROR:AXMainLogic.cpp(206)]SetErr Backup error
+[1780:1796:1026/215808:INFO:AXVolumeInfo.cpp(131)]GetVolumeInfo: GetVolumeInformationW result 1005 volume \\?\Volume{ba9c7421-0c07-11e5-87c0-806e6f6e6963}\
+[1780:1796:1026/215809:INFO:AXVolumeInfo.cpp(131)]GetVolumeInfo: GetVolumeInformationW result 1 volume \\?\Volume{f6bf70aa-2cbb-11e5-9471-806e6f6e6963}\
+[1780:1796:1026/215811:INFO:VolumeEnumerator.cpp(102)]Couldn't get information for volume A:\ error: 1
+[1780:1796:1026/215811:INFO:VolumeEnumerator.cpp(102)]Couldn't get information for volume D:\ error: 1005
+[1780:1796:1026/215817:INFO:VolumeEnumerator.cpp(102)]Couldn't get information for volume A:\ error: 1
+[1780:1796:1026/215817:INFO:VolumeEnumerator.cpp(102)]Couldn't get information for volume D:\ error: 1005
+[1780:1796:1026/215825:INFO:AXMainLogic.cpp(1316)]Updating backup task, target folder W:\My Backups number volumes 1
+[1780:1796:1026/215825:INFO:AXMainLogic.cpp(1340)]Volume 67: name \\?\Volume{fa590b5e-5988-11e5-8585-806e6f6e6963}
+[1780:1796:1026/215825:INFO:AXMainLogic.cpp(1366)]Updating existing task
+[1780:1796:1026/215825:INFO:AXMainLogic.cpp(1416)]Something changed - committing
