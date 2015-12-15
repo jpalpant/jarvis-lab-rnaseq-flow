@@ -18,6 +18,6 @@ setup(name='rnaseqflow',
       packages=['rnaseqflow'],
       install_requires=['neurolab'],
       entry_points = {
-        'console_scripts': ['rnaseqflow=rnaseqflow.__main__:main'],
+        'console_scripts': ['rnaseqflow=rnaseqflow.__main__:run_as_executable'],
       }
       )
