@@ -5,24 +5,17 @@ Created on Dec 14, 2015
 '''
 import subprocess
 from subprocess import CalledProcessError
+import platform
 
 def main():
     #Try to get the qt things using homebrew
-    get_sip()
-    get_qt()
-    get_pyqt()
+    if platform.system() == 'Darwin':
+        get_with_brew('sip')
+        get_with_brew('qt')
+        get_with_brew('pyqt')
+    elif platform.system() == 'Windows':
+        get_with_choco('???')
     
-         
-def get_sip():
-    get_with_brew('sip')
-
-
-def get_qt():
-    get_with_brew('qt')
-
-    
-def get_pyqt():
-    get_with_brew('pyqt')
 
 def get_with_brew(program):
     try: 
