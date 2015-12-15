@@ -3,17 +3,19 @@ Created on Dec 13, 2015
 
 @author: justinpalpant
 
-To build this module using pyinstaller, use something like:
+This file is part of the Jarvis Lab RNAseq Workflow program.
 
-pyinstaller --distpath=./exedist --name={packagename} 
-        --paths=./{packagefolder} {packagefolder}/__main__.py
-        
-Called from the project folder (same level as setup.py)
-    
---distpath puts the executable somewhere that is NOT /dist
---paths makes sure to include all modules inside rnaseqflow, like the critical
-    ones, which does not happen by default
---name makes sure the output name isn't __main__
+RNAseq Workflow is free software: you can redistribute it and/or modify it under the
+terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+RNAseq Workflow is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
 import subprocess
 import platform

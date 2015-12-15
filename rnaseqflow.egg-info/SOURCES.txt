@@ -1,10 +1,34 @@
+.DS_Store
+.project
+.pydevproject
+LICENSE
+README.md
+__main__.spec
+rnaseqflow.spec
 setup.py
+Test Files/.DS_Store
+Test Files/file1.txt
+Test Files/file2.txt
+Test Files/file3.txt
+Test Files/F1/.DS_Store
+Test Files/F1/f1r1.txt
+Test Files/F1/file2r1.txt
+Test Files/F2/.DS_Store
+Test Files/F2/f1r1.txt
+Test Files/F2/file2r1.txt
+Test Files/F2/F21/.DS_Store
+Test Files/F2/F21/f1r2.txt
+Test Files/F2/F21/f2r2.txt
+rnaseqflow/.DS_Store
 rnaseqflow/__init__.py
+rnaseqflow/__init__.pyc
 rnaseqflow/__main__.py
 rnaseqflow/workflow.py
+rnaseqflow/workflow.pyc
 rnaseqflow.egg-info/PKG-INFO
 rnaseqflow.egg-info/SOURCES.txt
 rnaseqflow.egg-info/dependency_links.txt
 rnaseqflow.egg-info/entry_points.txt
 rnaseqflow.egg-info/requires.txt
 rnaseqflow.egg-info/top_level.txt
+rnaseqflow/executables/rnaseqflow_osx

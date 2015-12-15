@@ -5,6 +5,8 @@ Summary: RNASeq Preprocessor
 Home-page: https://github.com/jpalpant/jarvis-lab-rnaseq-flow
 Author: Justin Palpant
 Author-email: justin@palpant.us
-License: UNKNOWN
-Description: UNKNOWN
+License: GPLv3
+Description: # jarvis-lab-rnaseq-flow
+        A Python library to make preprocessing of RNA-seq files more convenient
+        
 Platform: UNKNOWN
