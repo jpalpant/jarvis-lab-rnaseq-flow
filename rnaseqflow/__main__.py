@@ -17,8 +17,7 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
-import subprocess
-import platform
+import workflow
 
 def run_as_package():
     """This method is called when you use python -m {package}
@@ -33,7 +32,6 @@ def run_as_package():
     key = int(input('Make a selection: '))
     
     if key == 1:
-        import workflow
         w = workflow.Workflow()
         w.execute()
 
@@ -50,13 +48,24 @@ def run_as_executable():
     
     Funny how things work out, eh?
     """
-    print 'Running RNASeqFlow as a compile executable'
+    import pkg_resources
+    import subprocess
+    import platform
+
+    print 'Running RNASeqFlow as a compiled executable'
     sys = platform.system()
     
     if sys == 'Windows':
         print 'You have Windows!  Using .exe'
+        rm = pkg_resources.ResourceManager()
+        win_exe = rm.resource_filename(__name__, "executables/rnaseqflow_win/rnaseqflow_win.exe")
+        print 'Executable: ', win_exe
     elif sys == 'Darwin':
         print 'You have Mac!  Using executable'
+        rm = pkg_resources.ResourceManager()
+        mac_exe = rm.resource_filename(__name__, "executables/rnaseqflow_osx/rnaseqflow_osx")
+        print 'Executable: ', mac_exe
+        pid = subprocess.Popen([mac_exe])
     else:
         print "Your operating system is not recognizable"
         print ("Cannot run RNASeqFlow as an executable - please install all",
@@ -65,3 +74,4 @@ def run_as_executable():
 
 if __name__ == '__main__':
     run_as_package()
+    #run_as_executable()

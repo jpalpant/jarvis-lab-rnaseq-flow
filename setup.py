@@ -58,7 +58,7 @@ def find_files(directory, reldir, pattern):
 filelist = list(find_files('rnaseqflow/executables', 'rnaseqflow', '*'))
                 
 setup(name='rnaseqflow',
-      version='0.1.0',
+      version='0.2.0',
       description='RNASeq Preprocessor',
       author='Justin Palpant',
       author_email='justin@palpant.us',
