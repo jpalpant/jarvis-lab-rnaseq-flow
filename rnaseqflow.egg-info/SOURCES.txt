@@ -1,34 +1,93 @@
-.DS_Store
-.project
-.pydevproject
-LICENSE
-README.md
-__main__.spec
-rnaseqflow.spec
+README.txt
 setup.py
-Test Files/.DS_Store
-Test Files/file1.txt
-Test Files/file2.txt
-Test Files/file3.txt
-Test Files/F1/.DS_Store
-Test Files/F1/f1r1.txt
-Test Files/F1/file2r1.txt
-Test Files/F2/.DS_Store
-Test Files/F2/f1r1.txt
-Test Files/F2/file2r1.txt
-Test Files/F2/F21/.DS_Store
-Test Files/F2/F21/f1r2.txt
-Test Files/F2/F21/f2r2.txt
-rnaseqflow/.DS_Store
 rnaseqflow/__init__.py
-rnaseqflow/__init__.pyc
 rnaseqflow/__main__.py
 rnaseqflow/workflow.py
-rnaseqflow/workflow.pyc
 rnaseqflow.egg-info/PKG-INFO
 rnaseqflow.egg-info/SOURCES.txt
 rnaseqflow.egg-info/dependency_links.txt
 rnaseqflow.egg-info/entry_points.txt
 rnaseqflow.egg-info/requires.txt
 rnaseqflow.egg-info/top_level.txt
-rnaseqflow/executables/rnaseqflow_osx
+rnaseqflow/executables/blahexefile.txt
+rnaseqflow/executables/rnaseqflow_osx/MacOS.so
+rnaseqflow/executables/rnaseqflow_osx/Nav.so
+rnaseqflow/executables/rnaseqflow_osx/PyQt4.QtCore.so
+rnaseqflow/executables/rnaseqflow_osx/PyQt4.QtGui.so
+rnaseqflow/executables/rnaseqflow_osx/Python
+rnaseqflow/executables/rnaseqflow_osx/QtCore
+rnaseqflow/executables/rnaseqflow_osx/QtGui
+rnaseqflow/executables/rnaseqflow_osx/QtNetwork
+rnaseqflow/executables/rnaseqflow_osx/QtOpenGL
+rnaseqflow/executables/rnaseqflow_osx/QtSvg
+rnaseqflow/executables/rnaseqflow_osx/QtXml
+rnaseqflow/executables/rnaseqflow_osx/_AE.so
+rnaseqflow/executables/rnaseqflow_osx/_Ctl.so
+rnaseqflow/executables/rnaseqflow_osx/_Dlg.so
+rnaseqflow/executables/rnaseqflow_osx/_Evt.so
+rnaseqflow/executables/rnaseqflow_osx/_File.so
+rnaseqflow/executables/rnaseqflow_osx/_Menu.so
+rnaseqflow/executables/rnaseqflow_osx/_Qd.so
+rnaseqflow/executables/rnaseqflow_osx/_Res.so
+rnaseqflow/executables/rnaseqflow_osx/_Win.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_cn.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_hk.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_iso2022.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_jp.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_kr.so
+rnaseqflow/executables/rnaseqflow_osx/_codecs_tw.so
+rnaseqflow/executables/rnaseqflow_osx/_collections.so
+rnaseqflow/executables/rnaseqflow_osx/_functools.so
+rnaseqflow/executables/rnaseqflow_osx/_hashlib.so
+rnaseqflow/executables/rnaseqflow_osx/_heapq.so
+rnaseqflow/executables/rnaseqflow_osx/_io.so
+rnaseqflow/executables/rnaseqflow_osx/_locale.so
+rnaseqflow/executables/rnaseqflow_osx/_multibytecodec.so
+rnaseqflow/executables/rnaseqflow_osx/_random.so
+rnaseqflow/executables/rnaseqflow_osx/_scproxy.so
+rnaseqflow/executables/rnaseqflow_osx/_socket.so
+rnaseqflow/executables/rnaseqflow_osx/_ssl.so
+rnaseqflow/executables/rnaseqflow_osx/_struct.so
+rnaseqflow/executables/rnaseqflow_osx/array.so
+rnaseqflow/executables/rnaseqflow_osx/binascii.so
+rnaseqflow/executables/rnaseqflow_osx/bz2.so
+rnaseqflow/executables/rnaseqflow_osx/cPickle.so
+rnaseqflow/executables/rnaseqflow_osx/cStringIO.so
+rnaseqflow/executables/rnaseqflow_osx/datetime.so
+rnaseqflow/executables/rnaseqflow_osx/fcntl.so
+rnaseqflow/executables/rnaseqflow_osx/gestalt.so
+rnaseqflow/executables/rnaseqflow_osx/itertools.so
+rnaseqflow/executables/rnaseqflow_osx/libcrypto.1.0.0.dylib
+rnaseqflow/executables/rnaseqflow_osx/libreadline.6.dylib
+rnaseqflow/executables/rnaseqflow_osx/libssl.1.0.0.dylib
+rnaseqflow/executables/rnaseqflow_osx/math.so
+rnaseqflow/executables/rnaseqflow_osx/operator.so
+rnaseqflow/executables/rnaseqflow_osx/pyexpat.so
+rnaseqflow/executables/rnaseqflow_osx/readline.so
+rnaseqflow/executables/rnaseqflow_osx/resource.so
+rnaseqflow/executables/rnaseqflow_osx/rnaseqflow_osx
+rnaseqflow/executables/rnaseqflow_osx/select.so
+rnaseqflow/executables/rnaseqflow_osx/sip.so
+rnaseqflow/executables/rnaseqflow_osx/strop.so
+rnaseqflow/executables/rnaseqflow_osx/termios.so
+rnaseqflow/executables/rnaseqflow_osx/time.so
+rnaseqflow/executables/rnaseqflow_osx/unicodedata.so
+rnaseqflow/executables/rnaseqflow_osx/zlib.so
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/accessible/libqtaccessiblewidgets.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/codecs/libqcncodecs.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/codecs/libqjpcodecs.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/codecs/libqkrcodecs.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/codecs/libqtwcodecs.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/graphicssystems/libqglgraphicssystem.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/graphicssystems/libqtracegraphicssystem.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/iconengines/libqsvgicon.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqgif.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqico.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqjpeg.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqmng.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqsvg.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqtga.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt4_plugins/imageformats/libqtiff.dylib
+rnaseqflow/executables/rnaseqflow_osx/qt_menu.nib/classes.nib
+rnaseqflow/executables/rnaseqflow_osx/qt_menu.nib/info.nib
+rnaseqflow/executables/rnaseqflow_osx/qt_menu.nib/keyedobjects.nib

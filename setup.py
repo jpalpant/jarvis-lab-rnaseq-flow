@@ -43,14 +43,20 @@ In order to be able to run python -m rnaseqflow, all Qt packages must be
 
 
 from setuptools import setup
-import os
-from setuptools.command import sdist
-
+import os, fnmatch
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-
+def find_files(directory, reldir, pattern):
+    for root, dirs, files in os.walk(directory):
+        for basename in files:
+            if fnmatch.fnmatch(basename, pattern):
+                filename = os.path.join(root, basename)
+                yield os.path.relpath(filename, reldir)
+                
+filelist = list(find_files('rnaseqflow/executables', 'rnaseqflow', '*'))
+                
 setup(name='rnaseqflow',
       version='0.1.0',
       description='RNASeq Preprocessor',
@@ -58,12 +64,11 @@ setup(name='rnaseqflow',
       author_email='justin@palpant.us',
       url='https://github.com/jpalpant/jarvis-lab-rnaseq-flow',
       license = "GPLv3",
-      long_description=read('README.md'),
+      long_description=read('README.txt'),
       packages=['rnaseqflow'],
       install_requires=['neurolab'],
       entry_points = {
         'console_scripts': ['rnaseqflow=rnaseqflow.__main__:run_as_executable'],
       },
-      include_package_data=True,
-      exclude_package_data = { '': ['Test Files/*', 'build/*', 'dist/*', '*.spec'] }
+      package_data = {'rnaseqflow' : filelist},
       )

@@ -50,7 +50,7 @@ def run_as_executable():
     
     Funny how things work out, eh?
     """
-    print 'Trying to run the executable, I see?'
+    print 'Running RNASeqFlow as a compile executable'
     sys = platform.system()
     
     if sys == 'Windows':
@@ -58,7 +58,9 @@ def run_as_executable():
     elif sys == 'Darwin':
         print 'You have Mac!  Using executable'
     else:
-        print "Idk what you have but I can't run it, sorry"
+        print "Your operating system is not recognizable"
+        print ("Cannot run RNASeqFlow as an executable - please install all",
+                "necessary modules and run as python -m rnaseqflow")
    
 
 if __name__ == '__main__':
