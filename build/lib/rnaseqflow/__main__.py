@@ -19,7 +19,7 @@ RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
 import workflow
 
-def main():
+def run_as_package():
     """This method is called when you use python -m {package}
     
     It requires that all the important packages (including Qt, et al.) be
@@ -37,4 +37,4 @@ def main():
    
 
 if __name__ == '__main__':
-    main()
+    run_as_package()

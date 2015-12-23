@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: rnaseqflow
-Version: 0.2.0
+Version: 0.2.0.dev1
 Summary: RNASeq Preprocessor
 Home-page: https://github.com/jpalpant/jarvis-lab-rnaseq-flow
 Author: Justin Palpant

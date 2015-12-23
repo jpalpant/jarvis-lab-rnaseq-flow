@@ -19,46 +19,34 @@ RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 
 To build this module using pyinstaller, use something like:
 
-pyinstaller --distpath=./{packagefolder}/executables --name={packagename}_{platform} 
-        --paths=./{packagefolder} {packagefolder}/__main__.py
+pyinstaller --onefile --distpath=./executables/mac_osx --name=rnaseqflow_{version} --paths=./rnaseqflow rnaseqflow/__main__.py
         
 Called from the project folder (same level as setup.py)
     
+--onefile builds to a single executable file, easily manipulable
 --distpath puts the executable somewhere that is NOT /dist
 --paths makes sure to include all modules inside rnaseqflow, like the critical
     ones, which does not happen by default
 --name makes sure the output name isn't __main__
 
 Make a pip installable package by calling 
-    python setup.py sdist --formats=gztar,zip
-In order to include the executables in the package, make sure MANIFEST.in 
-    includes the line 'recursive-include executables'
-For the executable to be called from the path, make sure that entry_points has
-    'console_scripts': ['rnaseqflow=rnaseqflow.__main__:run_as_executable']
+    python setup.py bdist_wheel
+For the python module to be called from the path, make sure that entry_points has
+    'console_scripts': ['rnaseqflow=rnaseqflow.__main__:main']
 For the package to be importable, make sure packages=['rnaseqflow'] and that 
     install_requires=[list of package names, as in PyPI]
 In order to be able to run python -m rnaseqflow, all Qt packages must be
     pre-installed before calling pip install {tar.gz filename}
 '''
 
-
 from setuptools import setup
-import os, fnmatch
+import os
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-def find_files(directory, reldir, pattern):
-    for root, dirs, files in os.walk(directory):
-        for basename in files:
-            if fnmatch.fnmatch(basename, pattern):
-                filename = os.path.join(root, basename)
-                yield os.path.relpath(filename, reldir)
-                
-filelist = list(find_files('rnaseqflow/executables', 'rnaseqflow', '*'))
-                
 setup(name='rnaseqflow',
-      version='0.2.0',
+      version='0.2.0.dev1',
       description='RNASeq Preprocessor',
       author='Justin Palpant',
       author_email='justin@palpant.us',
@@ -66,9 +54,10 @@ setup(name='rnaseqflow',
       license = "GPLv3",
       long_description=read('README.txt'),
       packages=['rnaseqflow'],
-      install_requires=['neurolab'],
-      entry_points = {
-        'console_scripts': ['rnaseqflow=rnaseqflow.__main__:run_as_executable'],
-      },
-      package_data = {'rnaseqflow' : filelist},
+      install_requires=[],
+      classifier=['License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+                  'Programming Language :: Python',
+                  'Development Status :: 2 - Pre-Alpha',
+                  'Topic :: Scientific/Engineering',],
+      entry_points={'console_scripts': ['rnaseqflow=rnaseqflow.__main__:main'],},
       )
