@@ -34,7 +34,6 @@ def main():
     if key == 1:
         w = workflow.Workflow()
         w.execute()
-   
 
 if __name__ == '__main__':
     main()
