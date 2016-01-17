@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
 import workflow
+import logging
 
 def main():
     """This method is called when you use python -m {package}
@@ -25,8 +26,11 @@ def main():
     It requires that all the important packages (including Qt, et al.) be
     available in the Python path, correctly installed.
     """
+    logging.debug('Starting workflow selection')
+    
     print 'Please select the module to run:'
     print '1. Workflow'
+    print '2. Workflow (dry-run)'
     print '0: Quit'
     
     key = int(input('Make a selection: '))
@@ -34,6 +38,13 @@ def main():
     if key == 1:
         w = workflow.Workflow()
         w.execute()
+    elif key == 2:
+        w = workflow.Workflow(dummy=True)
+        w.execute()
+        
+    logging.debug('Terminating')
+
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.DEBUG)
     main()

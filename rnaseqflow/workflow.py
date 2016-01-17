@@ -1,4 +1,4 @@
-'''
+"""
 Created on Dec 12, 2015
 
 @author: justinpalpant
@@ -18,80 +18,106 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
-'''
-from PyQt4 import QtGui
+"""
+#from PyQt4 import QtGui
+import logging
 
 import subprocess
 import os, fnmatch
 import re
 import shutil
+import sys
+import numpy
 
 class Workflow():
-    '''
+    """
     Execute a simple series of steps used to preprocess RNAseq files
-    '''
+    """
     
-
-    def __init__(self):
-        '''
+    
+    def __init__(self, dummy=False):
+        """
         Initialize a workflow by checking for necessary shell programs
-        '''
-
+        """
+        self.logger = logging.getLogger('Workflow.logger')
+        self.dummy = dummy
+        
         try: 
-            pid = subprocess.Popen(['fastq-mcf','-h'], )
-            pid.kill()
+            subprocess.call(['fastq-mcf','-h'])
         except OSError:
-            print 'fastq-mcf not found'
             self.fastq = False
         else:
-            print 'Using fastq-mcf'
+            self.logger.info('Using fastq-mcf')
             self.fastq = True
             
-        self.buffersize = 128*1024 #bytes
+        self.buffersize = 128*1024 #in bytes; aka 128kB
+        self.extension = '.fastq.gz'
+        self.app = QtGui.QApplication(sys.argv)
                 
     def execute(self):
-        '''Allows the user to select a directory and processes all files within
+        """Allows the user to select a directory and processes all files within
         that directory
         
         This function is the primary function of the Workflow class.  All other
         functions are written as support for this function, at the moment
-        '''
+        """
         
         if not self.fastq:
-            print "fastq-mcf wasn't found - aborting"
-            return
+            self.logger.error("fastq-mcf wasn't found - terminating execution")
+            if not self.dummy:
+                return
         
-        folder = str(QtGui.QFileDialog.getExistingDirectory(parent=None, 
-                    caption='Select main folder'))
+        self.root_folder = str(QtGui.QFileDialog.getExistingDirectory(parent=None, 
+                caption='Select main root_folder'))
         
-        self.find_files(folder, '*.txt')
-        print self.files
+        self.out_folder = os.path.join(self.root_folder, 'preprocessed')
+        
+        self.adapters = str(QtGui.QFileDialog.getOpenFileName(parent=None, 
+                caption='Select adapters file'))
+        
+        print 'Enter the minimum quality q for fastq-mcf'
+        self.min_q = self.get_integer_input()
+          
+        self.logger.info('Finding all %s files', self.extension)
+        self.find_files(self.root_folder, '*'+self.extension)
+        self.logger.debug('Files found: %s', str(self.files))
+        
+        self.logger.info('Organizing files')
         self.organize_filenames()
-        print self.file_groups
+        self.logger.debug('Files organized: %s', str(self.file_groups))
+        
+        self.logger.info('Merging files by group')
+        self.merge_files()
+        self.logger.debug('Merged files: %s', str(self.merged_files))
+        
+        self.logger.info('Stripping adapters from merged files')
+        #self.strip_files()
+        self.logger.debug('Stripped files: %s', str(self.stripped_files))
 
             
     def organize_filenames(self):
-        '''Organizes a list of paths by sequence_id, part number, and direction 
+        """Organizes a list of paths by sequence_id, part number, and direction 
            
         This method requires that self.files already be populated.  If it is not,
         this method will not do anything.  If it is, this method sets
         self.file_groups to be a dictionary mapping 
             (sequence_id, dir):{part_num:path, part_num:path,...}
-        '''
+        """
+        
         #Step 1: Group files by (sequence_id, direction) : [list of files]
         initial_dict = {}
         
         for path in self.files:
-            sequence_id = self.get_sequence_id(os.path.basename(path))
-            dir = self.get_direction_id(os.path.basename(path))
+            sequence_id = Workflow.get_sequence_id(os.path.basename(path))
+            direction = Workflow.get_direction_id(os.path.basename(path))
             
-            if not (sequence_id and dir):
+            if not (sequence_id and direction):
                 continue
             
-            if (sequence_id, dir) in initial_dict:
-                initial_dict[(sequence_id, dir)].append(path)
+            if (sequence_id, direction) in initial_dict:
+                initial_dict[(sequence_id, direction)].append(path)
             else:
-                initial_dict[(sequence_id, dir)] = [path]
+                initial_dict[(sequence_id, direction)]= [path]
         
         #Step 2: Replace [list of filenames] with a dict {part_num: path}
         #The keys are the same as the previous dict, (sequence_id, dir) as key
@@ -99,32 +125,67 @@ class Workflow():
         for identifier, matched_files in initial_dict.items():
             indexed_map = {}
             for path in matched_files:
-                idx = self.get_part_num(os.path.basename(path))
+                idx = Workflow.get_part_num(os.path.basename(path))
                 if idx is not 0:
                     indexed_map[idx] = path
             
             self.file_groups[identifier] = indexed_map
         
     def merge_files(self):
+        """Merges all files in self.file_groups by group and places them in the
+        root directory self.out_folder"""
+        self.merged_files = []
         
-        pass
+        for i, (fileid, files) in enumerate(self.file_groups.items()):
+            outfile_name = 'merged_' + fileid[0] + '_'+ fileid[1] + self.extension
+            outfile_path = os.path.join(self.out_folder, outfile_name)
+            self.logger.info('Building file %d of %d: %s', i+1, len(self.file_groups), outfile_path)
+            with open(outfile_path, 'wb') as outfile:
+                for j in range(1, max(files.keys())+1):
+                    try:
+                        infile = files[j]
+                    except KeyError:
+                        self.logger.error('Part %03d not found, terminating construction of %s', j, outfile_path)
+                        break
+                        
+                    self.logger.debug('Merging file %d of %d: %s', j, max(files.keys()), infile)
+                    
+                    if self.dummy:
+                        outfile.write('Dummy {:03d}\n'.format(j))
+                    else:
+                        shutil.copyfileobj(open(infile, 'rb'), outfile, self.buffersize)
+                    
+            self.merged_files.append(outfile_path)
+            
+    def strip_files(self):
+        self.stripped_files = []
+        
+        for i, fname in enumerate(self.merged_files):
+            cmd = ['fastq-mcf', '-q','30', '-x', '0.5', '-o', 'trimmed_'+fname, self.adapters, fname]
+            self.logger.info('Stripping adapters for file %d of %d; calling %s', i, len(self.merged_files), str(cmd))
+            
+            if not self.dummy:
+                subprocess.call(cmd)
+            
+            
     
     def find_files(self, directory, pattern):
-        '''Recursively walk a directory and return filenames matching pattern'''
+        """Recursively walk a directory and return filenames matching pattern"""
         self.files = []
-        for root, dirs, files in os.walk(directory):
+        for root, _, files in os.walk(directory):
             for basename in files:
                 if fnmatch.fnmatch(basename, pattern):
                     filename = os.path.join(root, basename)
-                    self.files = self.files + [filename]
+                    self.files.append(filename)
     
-    def get_sequence_id(self, filename):
-        '''Gets the six-letter RNA sequence that identifies the RNAseq file
+    @staticmethod    
+    def get_sequence_id(filename):
+        """Gets the six-letter RNA sequence that identifies the RNAseq file
         
         Returns a six character string that is the ID, or an empty string if no
-        identifying sequence is found.'''
+        identifying sequence is found."""
         
-        p = re.compile('[ACTG]{6}')
+        p = re.compile('*.[ACTG]{6}')
 
         m = p.search(filename)
         if m is None:
@@ -132,24 +193,25 @@ class Workflow():
         else:
             return m.group()
         
-        
-    def get_direction_id(self, filename):
-        '''Gets the direction identifier from an RNAseq filename
+    @staticmethod
+    def get_direction_id(filename):
+        """Gets the direction identifier from an RNAseq filename
         
         A direction identifier is either R01 or R02, indicating a forward or a
         backwards read, respectively.
-        '''
+        """
         
-        p = re.compile('R\d{2}')
+        p = re.compile('R\d{1}')
         
         m = p.search(filename)
         if m is None:
             return ''
         else:
             return m.group()
-        
-    def get_part_num(self, filename):
-        '''Returns an integer indicating the file part number of the selected
+    
+    @staticmethod
+    def get_part_num(filename):
+        """Returns an integer indicating the file part number of the selected
         RNAseq file
         
         RNAseq files, due to their size, are split into many smaller files, each
@@ -158,26 +220,34 @@ class Workflow():
         
         This requires that there only be one sequence of three digits in the
         filename
-        '''
-        p = re.compile('\d{3}')
+        """
+        p = re.compile('_\d{3}')
         
         m = p.search(filename)
         if m is None:
             return 0
         else:
-            return int(m.group())
+            text = m.group()
+            return int(text[1:])
         
-        
+    def get_integer_input(self):
+        while True:
+            try:
+                input_value = int(raw_input('Please enter an integer: '))
+            except ValueError:
+                self.logger.warning("That doesn't appear to be an integer, please try again.")
+                continue
+            else:
+                break
+            
+        return input_value
+    
+       
 def main():
-    import sys
-    app = QtGui.QApplication(sys.argv)
+    logging.basicConfig(level=logging.DEBUG)
     
     window = Workflow()
     window.execute()
     
-
-    
-    
-
 if __name__ == '__main__':
     main()

@@ -5,29 +5,28 @@ Created on Dec 25, 2015
 '''
 import unittest
 from rnaseqflow.workflow import Workflow
-import os
 
 class TestWorkflow(unittest.TestCase):
 
     def setUp(self):
-        self.w = Workflow()
-        self.files = ['blahblah_AAAAAA_blah_R01_001.txt'
-                      'blahblah_AAAAAA_blah_R01_002.txt'
-                      'blahblah_AAAAAA_blah_R02_001.txt'
-                      'blahblah_AAAAAA_blah_R02_002.txt'
-                      'blahblah_AAAAAA_blah_R02_003.txt'
-                      'blahblah_AAAAAG_blah_R01_001.txt'
-                      'blahblah_AAAAAG_blah_R01_002.txt'
-                      'blahblah_AAAAAG_blah_R01_003.txt'
-                      'blahblah_AAAAAG_blah_R02_001.txt'
-                      'blahblah_AAAAAG_blah_R02_002.txt'
-                      'blahblah_AAAAAG_blah_R02_003.txt'
-                      'blahblah_AAAAAG_blah_R02_004.txt'
-                      'blahblah_AAAAAG_blah_R02_005.txt'
-                      'blahblah_ACTAGC_blah_R01_001.txt'
-                      'blahblah_ACTAGC_blah_R01_002.txt'
-                      'blahblah_ACTAGC_blah_R01_003.txt'
-                      'blahblah_ACTAGC_blah_R01_004.txt']
+        self.w = Workflow(dummy=True)
+        self.files = ['blahblah_AAAAAA_blah_R1_001.txt'
+                      'blahblah_AAAAAA_blah_R1_002.txt'
+                      'blahblah_AAAAAA_blah_R2_001.txt'
+                      'blahblah_AAAAAA_blah_R2_002.txt'
+                      'blahblah_AAAAAA_blah_R2_003.txt'
+                      'blahblah_AAAAAG_blah_R1_001.txt'
+                      'blahblah_AAAAAG_blah_R1_002.txt'
+                      'blahblah_AAAAAG_blah_R1_003.txt'
+                      'blahblah_AAAAAG_blah_R2_001.txt'
+                      'blahblah_AAAAAG_blah_R2_002.txt'
+                      'blahblah_AAAAAG_blah_R2_003.txt'
+                      'blahblah_AAAAAG_blah_R2_004.txt'
+                      'blahblah_AAAAAG_blah_R2_005.txt'
+                      'blahblah_ACTAGC_blah_R1_001.txt'
+                      'blahblah_ACTAGC_blah_R1_002.txt'
+                      'blahblah_ACTAGC_blah_R1_003.txt'
+                      'blahblah_ACTAGC_blah_R1_004.txt']
         
     def tearDown(self):
         pass
@@ -36,8 +35,6 @@ class TestWorkflow(unittest.TestCase):
     def test_get_sequence_id(self):
         ids = ['AAAAAA']*5 + ['AAAAAG']*8 + ['ACTAGC']*4
         
-        for filename, id in zip(self.files, ids):
-            self.assertEqual(self.w.get_sequence_id(filename), id)
         
     
     def test_get_part_num_from_filename(self):
