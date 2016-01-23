@@ -19,17 +19,15 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 """
-#from PyQt4 import QtGui
+from PyQt4.QtGui import QApplication, QFileDialog
 import logging
-
 import subprocess
 import os, fnmatch
 import re
 import shutil
 import sys
-import numpy
 
-class Workflow():
+class Workflow(object):
     """
     Execute a simple series of steps used to preprocess RNAseq files
     """
@@ -43,16 +41,17 @@ class Workflow():
         self.dummy = dummy
         
         try: 
-            subprocess.call(['fastq-mcf','-h'])
+            with open(os.devnull, "w") as fnull:
+                subprocess.call(['fastq-mcf'], stdout=fnull, stderr=fnull)
         except OSError:
             self.fastq = False
         else:
             self.logger.info('Using fastq-mcf')
             self.fastq = True
             
-        self.buffersize = 128*1024 #in bytes; aka 128kB
+        self.buffersize = 1024*1024 #in bytes; aka 128kB
         self.extension = '.fastq.gz'
-        self.app = QtGui.QApplication(sys.argv)
+        self.app = QApplication(sys.argv)
                 
     def execute(self):
         """Allows the user to select a directory and processes all files within
@@ -67,13 +66,19 @@ class Workflow():
             if not self.dummy:
                 return
         
-        self.root_folder = str(QtGui.QFileDialog.getExistingDirectory(parent=None, 
+        self.root_folder = str(QFileDialog.getExistingDirectory(parent=None, 
                 caption='Select main root_folder'))
         
         self.out_folder = os.path.join(self.root_folder, 'preprocessed')
         
-        self.adapters = str(QtGui.QFileDialog.getOpenFileName(parent=None, 
+        self.adapters = str(QFileDialog.getOpenFileName(parent=None, 
                 caption='Select adapters file'))
+        
+        try: 
+            os.makedirs(self.out_folder)
+        except OSError:
+            if not os.path.isdir(self.out_folder):
+                raise
         
         print 'Enter the minimum quality q for fastq-mcf'
         self.min_q = self.get_integer_input()
@@ -91,7 +96,7 @@ class Workflow():
         self.logger.debug('Merged files: %s', str(self.merged_files))
         
         self.logger.info('Stripping adapters from merged files')
-        #self.strip_files()
+        self.strip_files()
         self.logger.debug('Stripped files: %s', str(self.stripped_files))
 
             
@@ -129,7 +134,8 @@ class Workflow():
                 if idx is not 0:
                     indexed_map[idx] = path
             
-            self.file_groups[identifier] = indexed_map
+            if indexed_map:
+                self.file_groups[identifier] = indexed_map
         
     def merge_files(self):
         """Merges all files in self.file_groups by group and places them in the
@@ -161,13 +167,20 @@ class Workflow():
         self.stripped_files = []
         
         for i, fname in enumerate(self.merged_files):
-            cmd = ['fastq-mcf', '-q','30', '-x', '0.5', '-o', 'trimmed_'+fname, self.adapters, fname]
-            self.logger.info('Stripping adapters for file %d of %d; calling %s', i, len(self.merged_files), str(cmd))
+            outfile_name = 'trimmed_'+os.path.basename(fname)
+            outfile_path = os.path.join(os.path.dirname(fname), outfile_name)
+            cmd = ['fastq-mcf',  self.adapters, fname, '-q','30', '-x', '0.5', '-o', outfile_path]
+            self.logger.info('Stripping adapters for file %d of %d', i+1, len(self.merged_files))
+            self.logger.debug('Calling %s', str(cmd))
             
-            if not self.dummy:
+            if self.dummy:
+                self.logger.info('Creating dummy file %s', outfile_name)
+                Workflow.touch(outfile_path)
+            else:
                 subprocess.call(cmd)
-            
-            
+                
+            if os.path.isfile(outfile_path):
+                self.stripped_files.append(outfile_path)
     
     def find_files(self, directory, pattern):
         """Recursively walk a directory and return filenames matching pattern"""
@@ -178,6 +191,11 @@ class Workflow():
                     filename = os.path.join(root, basename)
                     self.files.append(filename)
     
+    @staticmethod
+    def touch(path):
+        with open(path, 'a'):
+            os.utime(path, None)
+    
     @staticmethod    
     def get_sequence_id(filename):
         """Gets the six-letter RNA sequence that identifies the RNAseq file
@@ -185,7 +203,7 @@ class Workflow():
         Returns a six character string that is the ID, or an empty string if no
         identifying sequence is found."""
         
-        p = re.compile('*.[ACTG]{6}')
+        p = re.compile('.*[ACTG]{6}')
 
         m = p.search(filename)
         if m is None:
