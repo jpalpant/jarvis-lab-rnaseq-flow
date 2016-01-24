@@ -26,7 +26,7 @@ def main():
     It requires that all the important packages (including Qt, et al.) be
     available in the Python path, correctly installed.
     """
-    logging.debug('Starting workflow selection')
+    logging.info('Starting workflow selection')
     
     print 'Please select the module to run:'
     print '1. Workflow'
@@ -42,9 +42,9 @@ def main():
         w = workflow.Workflow(dummy=True)
         w.execute()
         
-    logging.debug('Terminating')
+    logging.info('Terminating')
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     main()

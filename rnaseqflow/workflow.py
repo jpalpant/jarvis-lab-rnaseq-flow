@@ -40,6 +40,11 @@ class Workflow(object):
         self.logger = logging.getLogger('Workflow.logger')
         self.dummy = dummy
         
+        
+        level = logging.DEBUG if self.dummy else logging.INFO
+        
+        self.logger.setLevel(level)
+        
         try: 
             with open(os.devnull, "w") as fnull:
                 subprocess.call(['fastq-mcf'], stdout=fnull, stderr=fnull)
@@ -67,7 +72,7 @@ class Workflow(object):
                 return
         
         self.root_folder = str(QFileDialog.getExistingDirectory(parent=None, 
-                caption='Select main root_folder'))
+                caption='Select root folder'))
         
         self.out_folder = os.path.join(self.root_folder, 'preprocessed')
         
