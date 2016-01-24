@@ -46,7 +46,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='rnaseqflow',
-      version='0.2.0.dev1',
+      version='1.0.0',
       description='RNASeq Preprocessor',
       author='Justin Palpant',
       author_email='justin@palpant.us',
