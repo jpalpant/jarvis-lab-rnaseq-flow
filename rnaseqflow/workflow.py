@@ -87,6 +87,9 @@ class Workflow(object):
         
         print 'Enter the minimum quality q for fastq-mcf'
         self.min_q = self.get_integer_input()
+        
+        print 'Enter the value of the -l flag: '
+        self.l_value = self.get_integer_input()
           
         self.logger.info('Finding all %s files', self.extension)
         self.find_files(self.root_folder, '*'+self.extension)
@@ -174,7 +177,7 @@ class Workflow(object):
         for i, fname in enumerate(self.merged_files):
             outfile_name = 'trimmed_'+os.path.basename(fname)
             outfile_path = os.path.join(os.path.dirname(fname), outfile_name)
-            cmd = ['fastq-mcf',  self.adapters, fname, '-q','30', '-x', '0.5', '-o', outfile_path]
+            cmd = ['fastq-mcf',  self.adapters, fname, '-q', self.min_q, '-l', self.l_value, '-x', '0.5', '-o', outfile_path]
             self.logger.info('Stripping adapters for file %d of %d', i+1, len(self.merged_files))
             self.logger.debug('Calling %s', str(cmd))
             
