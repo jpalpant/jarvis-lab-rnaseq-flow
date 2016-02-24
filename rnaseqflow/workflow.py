@@ -177,7 +177,7 @@ class Workflow(object):
         for i, fname in enumerate(self.merged_files):
             outfile_name = 'trimmed_'+os.path.basename(fname)
             outfile_path = os.path.join(os.path.dirname(fname), outfile_name)
-            cmd = ['fastq-mcf',  self.adapters, fname, '-q', self.min_q, '-l', self.l_value, '-x', '0.5', '-o', outfile_path]
+            cmd = ['fastq-mcf',  self.adapters, fname, '-q', str(self.min_q), '-l', str(self.l_value), '-x', '0.5', '-o', outfile_path]
             self.logger.info('Stripping adapters for file %d of %d', i+1, len(self.merged_files))
             self.logger.debug('Calling %s', str(cmd))
             

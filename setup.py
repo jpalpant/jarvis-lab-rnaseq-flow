@@ -19,7 +19,7 @@ RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 
 To build this module using pyinstaller, use something like:
 
-pyinstaller --onefile --distpath=./executables/mac_osx --name=rnaseqflow_{version} --paths=./rnaseqflow rnaseqflow/__main__.py
+pyinstaller --onefile --name=rnaseqflow_{version} --paths=./rnaseqflow rnaseqflow/__main__.py
         
 Called from the project folder (same level as setup.py)
     
