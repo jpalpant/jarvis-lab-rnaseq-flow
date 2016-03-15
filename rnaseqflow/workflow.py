@@ -19,7 +19,7 @@ FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 """
-from PyQt4.QtGui import QApplication, QFileDialog  # @UnresolvedImport
+
 import logging
 import subprocess
 import os
@@ -27,23 +27,62 @@ import fnmatch
 import re
 import shutil
 import sys
+from abc import ABCMeta, abstractmethod, abstractproperty
+
+
+def trim(docstring):
+    if not docstring:
+        return ''
+    # Convert tabs to spaces (following the normal Python rules)
+    # and split into a list of lines:
+    lines = docstring.expandtabs().splitlines()
+    # Determine minimum indentation (first line doesn't count):
+    indent = sys.maxint
+    for line in lines[1:]:
+        stripped = line.lstrip()
+        if stripped:
+            indent = min(indent, len(line) - len(stripped))
+    # Remove indentation (first line is special):
+    trimmed = [lines[0].strip()]
+    if indent < sys.maxint:
+        for line in lines[1:]:
+            trimmed.append(line[indent:].rstrip())
+    # Strip off trailing and leading blank lines:
+    while trimmed and not trimmed[-1]:
+        trimmed.pop()
+    while trimmed and not trimmed[0]:
+        trimmed.pop(0)
+    # Return a single string:
+    return '\n'.join(trimmed)
+
+
+def firstline(docstring):
+    if not docstring:
+        return ''
+    # Convert tabs to spaces (following the normal Python rules)
+    # and split into a list of lines:
+    lines = docstring.expandtabs().splitlines()
+    # Determine minimum indentation (first line doesn't count):
+    return lines[0]
+
+
+def all_subclasses(cls):
+    return cls.__subclasses__() + [g for s in cls.__subclasses__()
+                                   for g in all_subclasses(s)]
 
 
 class Workflow(object):
     """
     Execute a simple series of steps used to preprocess RNAseq files
     """
+    logger = logging.getLogger('rnaseqflow.Workflow')
 
-    def __init__(self, dummy=False):
+    def __init__(self):
         """
         Initialize a workflow by checking for necessary shell programs
         """
-        self.logger = logging.getLogger('Workflow.logger')
-        self.dummy = dummy
 
-        level = logging.DEBUG if self.dummy else logging.INFO
-
-        self.logger.setLevel(level)
+        self.items = []
 
         try:
             with open(os.devnull, "w") as fnull:
@@ -56,7 +95,24 @@ class Workflow(object):
 
         self.buffersize = 1024 * 1024  # in bytes; aka 128kB
         self.extension = '.fastq.gz'
-        self.app = QApplication(sys.argv)
+
+    def append(self, item):
+        """Add a WorkflowStage to the workflow
+
+        Arguments:
+            item - a WorkflowStage to execute
+        """
+
+        self.items.append(item)
+
+    def insert(self, idx, item):
+        """Insert a WorkflowStage into the workflow
+
+        Arguments:
+            item - a WorkflowStage to execute
+        """
+
+        self.items.insert(idx, item)
 
     def execute(self):
         """Allows the user to select a directory and processes all files within
@@ -66,18 +122,20 @@ class Workflow(object):
         functions are written as support for this function, at the moment
         """
 
+        current_input = None
+        for item in self.items:
+            next_input = item.execute(current_input)
+            current_input = next_input
+
         if not self.fastq:
             self.logger.error("fastq-mcf wasn't found - terminating execution")
             if not self.dummy:
                 return
 
-        self.root_folder = str(QFileDialog.getExistingDirectory(parent=None,
-                caption='Select root folder'))
-
         self.out_folder = os.path.join(self.root_folder, 'preprocessed')
 
         self.adapters = str(QFileDialog.getOpenFileName(parent=None,
-                caption='Select adapters file'))
+                                                        caption='Select adapters file'))
 
         try:
             os.makedirs(self.out_folder)
@@ -185,7 +243,7 @@ class Workflow(object):
             outfile_name = 'trimmed_' + os.path.basename(fname)
             outfile_path = os.path.join(os.path.dirname(fname), outfile_name)
             cmd = ['fastq-mcf', self.adapters, fname, '-q',
-                str(self.min_q), '-l', str(self.l_value), '-x', '0.5', '-o', outfile_path]
+                   str(self.min_q), '-l', str(self.l_value), '-x', '0.5', '-o', outfile_path]
             self.logger.info(
                 'Stripping adapters for file %d of %d', i + 1, len(self.merged_files))
             self.logger.debug('Calling %s', str(cmd))
@@ -279,11 +337,164 @@ class Workflow(object):
         return input_value
 
 
-def main():
-    logging.basicConfig(level=logging.DEBUG)
+class WorkflowStage(object):
+    """Interfaces for a stage of a Workflow
 
-    window = Workflow()
-    window.execute()
+    Subclasses must override the run method, which takes and verifies arbitrary
+    input, processes it, and returns some output
+    """
+    __metaclass__ = ABCMeta
+
+    logger = logging.getLogger('rnaseqflow.WorkflowStage')
+
+    @abstractmethod
+    def run(self, input):
+        """Attempt to process the provided input according to the rules of the
+        subclass
+
+        Arguments:
+            input - an arbitrary input to be processed, usually a list of file
+                names or file-like objects.  The subclass must typecheck the
+                input as necessary, and define what input it takes
+
+        Returns:
+            output - the results of the processing of this workflow item
+        """
+        pass
+
+    @abstractproperty
+    def spec(self):
+        """Abstract class property, override with @classmethod
+
+        Used by the help method to specify available WorkflowItems
+        """
+
+        pass
+
+    @classmethod
+    def shorthelp(cls):
+        helpstrings = []
+
+        helpstrings.append('The following WorkflowItems are available:\n')
+
+        for sub in all_subclasses(cls):
+            helpstrings.append(
+                '{0}: {1}\n{2}\n'.format(sub.spec, sub.__name__, firstline(sub.__doc__)))
+
+        helpstrings.append('Use "--help stages" for more details')
+        return ''.join(helpstrings)
+
+    @classmethod
+    def longhelp(cls):
+        helpstrings = []
+
+        helpstrings.append('The following WorkflowItems are available:\n')
+
+        for sub in all_subclasses(cls):
+            helpstrings.append(
+                '{0}: {1}\n    {2}\n'.format(sub.spec, sub.__name__, sub.__doc__))
+
+        return ''.join(helpstrings)
+
+
+class FindFilesRecursive(WorkflowStage):
+    """Find files recursively in a folder
+
+    Input:
+        No input is required for this WorkflowStage
+    Output:
+        A flat list of file path strings
+    Args used:
+        --root: the folder in which to start the search
+        --ext: the file extention to search for
+    """
+
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.FindFilesFlatItem')
+    spec = '1A'
+
+
+class FindFilesFlat(WorkflowStage):
+    """Find files in a folder without recursion into subfolders
+
+    Input:
+        No input is required for this WorkflowStage
+    Output:
+        A flat list of file path strings
+    Args used:
+        --root: the folder in which to start the search
+        --ext: the file extention to search for
+    """
+
+    logger = logging.getLogger(
+        'rnaseqflow.WorkflowStage.FindFilesRecursiveItem')
+    spec = '1B'
+
+
+class MergeSplitFiles(WorkflowStage):
+    """Find files in a folder without recursion into subfolders
+
+    Input:
+        A flat list of files to be grouped and merged
+    Output:
+        A flat list of merged filenames
+    Args used:
+        --blocksize: number of kilobytes to use as a copy block size
+    """
+
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.MergeSplitFilesItem')
+    spec = '2'
+
+
+class FastQMCFTrimSolo(WorkflowStage):
+    """Find files in a folder without recursion into subfolders
+
+    Input:
+        A flat list of files to be passed into fastq-mcf one at a time
+    Output:
+        A flat list of trimmed file names
+    Args used:
+        --adapters: the filepath of the fasta adapters file
+        --fastq: a string of arguments to pass directly to fastq-mcf
+    """
+
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimItem')
+    spec = '3'
+
+    def __init__(self, args):
+        """Run all checks needed to create a FastQMCFTrimItem
+
+        Check that fastq-mcf exists in the system
+        Specify the fasta adapter file and any arguments
+        """
+
+        try:
+            with open(os.devnull, "w") as fnull:
+                subprocess.call([args.fastq], stdout=fnull, stderr=fnull)
+        except OSError:
+            self.logger.error(
+                'fastq-mcf not found, cannot use FastQMCFTrimItem')
+            raise
+        else:
+            self.logger.info('fastq-mcf found')
+            self.fastq_command = args.fastq
+
+        if not args.adapters:
+            print "fasta adapter file not yet specified"
+            self.adapters = raw_input(
+                "Please specify the .fasta adapter file location")
+        else:
+            self.adapters = args.adapters
+
+        if not args.fastq_args:
+            print "fastq arguments not yet specified"
+            self.fasta_args = raw_input(
+                "Please specify an optional .fastq argument string (e.g. '-q 30 -x 0.5'): ")
+        else:
+            self.fastq_args = args.fastq_args
+
+
+def main():
+    pass
 
 if __name__ == '__main__':
     main()

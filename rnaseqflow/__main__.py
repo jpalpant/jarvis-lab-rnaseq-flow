@@ -17,34 +17,90 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
-import workflow
+from workflow import Workflow, WorkflowStage, all_subclasses
 import logging
+import os
+import argparse
+
+
+def opts():
+    parser = argparse.ArgumentParser(
+        description='Preprocess RNAseq files.', add_help=False, prog='rnaseqflow')
+    parser.add_argument('--stages', nargs='*',
+                        help='Add stages')
+    parser.add_argument(
+        '--help', choices=('all', 'stages'),
+        nargs='?',
+        const='all',
+        help='display help for part of the program and exit')
+    
+    parser.add_argument('--root',
+                        help='The root directory to be searched for RNAseq files')
+    parser.add_argument('--ext',
+                        help='The file extension to search for')
+    
+    parser.add_argument('--adapters',
+                        help='FastA adapters file to use')
+    parser.add_argument('--fastq', dest='fastq_args',
+                        help='Specify arguments to be passed to fastq-mcf')
+
+    parser.add_argument(
+        '--logging',
+        choices=('debug', 'info', 'warning',
+                 'error', 'critical'),
+        default='info', help='Logging level (default: %(default)s)')
+
+    parser.add_argument(
+        '--version',
+        action='version', version='%(prog)s 0.2.0')
+
+    return parser
+
 
 def main():
     """This method is called when you use python -m {package}
-    
-    It requires that all the important packages (including Qt, et al.) be
+
+    It requires that all the important packages be
     available in the Python path, correctly installed.
     """
-    logging.info('Starting workflow selection')
-    
-    print 'Please select the module to run:'
-    print '1. Workflow'
-    print '2. Workflow (dry-run)'
-    print '0: Quit'
-    
-    key = int(input('Make a selection: '))
-    
-    if key == 1:
-        w = workflow.Workflow()
-        w.execute()
-    elif key == 2:
-        w = workflow.Workflow(dummy=True)
-        w.execute()
-        
-    logging.info('Terminating')
 
+    args = opts().parse_args()
+
+    if args.help == 'all':
+        opts().print_help()
+        return
+    elif args.help == 'stages':
+        print WorkflowStage.longhelp()
+        return
+
+    logging.basicConfig(
+        level=getattr(logging, args.logging.upper()),
+        format='%(asctime)s in %(name)s - %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p'
+    )
+
+    w = Workflow()
+
+    if not args.stages:
+        print 'Stages not given with --stages argument'
+        print WorkflowStage.shorthelp()
+        stages = raw_input(
+            'Enter space separated stage specifiers (e.g. "1A 2 3"): ')
+    else:
+        stages = args.stages
+
+    classmap = {cls.spec: cls for cls in all_subclasses(WorkflowStage)}
+
+    for stage_spec in stages.split():
+        try:
+            w.append(classmap[stage_spec]())
+        except KeyError as e:
+            logging.error(
+                'No valid stage specifier {0} - use "--help stages" to see '
+                'stage specifiers for this version'.format(stage_spec))
+            return
+
+    w.execute()
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     main()

@@ -42,22 +42,24 @@ In order to be able to run python -m rnaseqflow, all Qt packages must be
 from setuptools import setup
 import os
 
+
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(name='rnaseqflow',
-      version='1.0.2',
+      version='0.2.0',
       description='RNASeq Preprocessor',
       author='Justin Palpant',
       author_email='justin@palpant.us',
       url='https://github.com/jpalpant/jarvis-lab-rnaseq-flow',
-      license = "GPLv3",
+      license="GPLv3",
       long_description=read('README.md'),
       packages=['rnaseqflow'],
       install_requires=[],
       classifier=['License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
                   'Programming Language :: Python',
                   'Development Status :: 4 - Beta',
-                  'Topic :: Scientific/Engineering',],
-      entry_points={'console_scripts': ['rnaseqflow=rnaseqflow.__main__:main'],},
+                  'Topic :: Scientific/Engineering', ],
+      entry_points={
+          'console_scripts': ['rnaseqflow=rnaseqflow.__main__:main'], },
       )
