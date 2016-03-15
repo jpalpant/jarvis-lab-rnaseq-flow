@@ -66,7 +66,12 @@ def opts():
         help='FastA adapters file to use')
 
     parser.add_argument(
-        '--fastq', dest='fastq_args',
+        '--fastq',
+        help='Location of the fastq-mcf executable',
+        default='fastq-mcf')
+
+    parser.add_argument(
+        '--fastq_args',
         help='Specify arguments to be passed to fastq-mcf')
 
     return parser
@@ -80,6 +85,8 @@ def main():
     """
 
     args = opts().parse_args()
+
+    print 'Adapters? {0}, {1}'.format(hasattr(args, 'adapters'), args.adapters)
 
     if args.help == 'all':
         opts().print_help()

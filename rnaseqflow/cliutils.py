@@ -135,7 +135,7 @@ class ArgFiller(object):
 
         self.comp = PathCompleter()
         # we want to treat '/' as part of a word, so override the delimiters
-        readline.set_completer_delims(' \t\n;')
+        readline.set_completer_delims('\t\n;')
         readline.parse_and_bind("tab: complete")
         readline.set_completer(self.comp.complete)
 
@@ -153,7 +153,6 @@ class ArgFiller(object):
                 raise
             else:
                 fillmethod()
-                print ''
 
     @classmethod
     def _get_integer_input(cls, message):
@@ -204,7 +203,9 @@ class ArgFiller(object):
     def _fill_root(self):
         """Fill in the --root argument with a valid root directory"""
 
-        if not hasattr(self.args, 'root') or not os.path.isdir(self.args.root):
+        if not (hasattr(self.args, 'root') and
+                self.args.root and
+                os.path.isdir(self.args.root)):
             print 'No root directory provided with --root'
             self.args.root = self._get_directory_input(
                 'Please enter a directory to use as the root folder: ')
@@ -220,7 +221,9 @@ class ArgFiller(object):
     def _fill_blocksize(self):
         """Fill in the --blocksize argument with a valid integer (in kB)"""
 
-        if not hasattr(self.args, 'blocksize') or not isinstance(self.args.blocksize, int) or not self.args.blocksize:
+        if not (hasattr(self.args, 'blocksize') and
+                isinstance(self.args.blocksize, int) and
+                self.args.blocksize):
             print 'No blocksize for file copy operations given with --blocksize'
 
             self.args.blocksize = self._get_integer_input(
@@ -229,16 +232,26 @@ class ArgFiller(object):
     def _fill_adapters(self):
         """Fill in the --adapters argument with a valid file path"""
 
-        if not hasattr(self.args, 'adapters') or not os.path.isfile(self.args.adapters):
+        if not (hasattr(self.args, 'adapters') and
+                self.args.adapters and
+                os.path.isfile(self.args.adapters)):
             print "fasta adapter file not yet specified with --adapters"
             self.args.adapters = self._get_filepath_input(
                 "Please specify the .fasta adapter file location: ")
 
     def _fill_fastq_args(self):
+        """Fill in the arguments to be passed to fastq"""
 
-        if not hasattr(self.args, 'fastq_args') or not self.args.fastq_args:
-            print 'No fastq arguments provided to --fastq'
+        if not (hasattr(self.args, 'fastq_args') and self.args.fastq_args):
+            print 'No fastq arguments provided to --fastq_args'
 
             self.args.fastq_args = raw_input(
                 'Provide an optional argument string for fastq'
                 ' here (e.g. "-q 30 -x 0.5"): ')
+
+    def _fill_fastq(self):
+        """Fill in the fastq-mcf executable argument with a default"""
+
+        if not (hasattr(self.args, 'fastq') and self.args.fastq):
+
+            self.args.fastq = 'fastq-mcf'

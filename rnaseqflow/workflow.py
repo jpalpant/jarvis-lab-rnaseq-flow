@@ -80,7 +80,6 @@ class Workflow(object):
             current_input = next_input
 
 
-
 class WorkflowStage(object):
     """Interfaces for a stage of a Workflow
 
@@ -260,7 +259,7 @@ class MergeSplitFiles(WorkflowStage):
 
             with open(outfile_path, 'wb') as outfile:
                 for j, infile in enumerate(files):
-                    if j+1 != self._get_part_num(infile):
+                    if j + 1 != self._get_part_num(infile):
                         self.logger.error(
                             'Part {0:03d} not found, terminating construction'
                             ' of {1}'.format(j, outfile_path))
@@ -376,7 +375,8 @@ class FastQMCFTrimSolo(WorkflowStage):
     Args used:
         --root: the folder where merged files will be placed
         --adapters: the filepath of the fasta adapters file
-        --fastq: a string of arguments to pass directly to fastq-mcf
+        --fastq: the location of the fastq-mcf executable
+        --fastq_args: a string of arguments to pass directly to fastq-mcf
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimSolo')
@@ -389,11 +389,12 @@ class FastQMCFTrimSolo(WorkflowStage):
         Specify the fasta adapter file and any arguments
         """
         argfiller = ArgFiller(args)
-        argfiller.fill(['root', 'adapters', 'fastq_args'])
+        argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args'])
 
         self.root = args.root
         self.adapters = args.adapters
         self.fastq_args = args.fastq_args
+        self.executable = args.fastq
 
         self.outdir = os.path.join(self.root, 'trimmed')
         try:
@@ -404,7 +405,7 @@ class FastQMCFTrimSolo(WorkflowStage):
 
         try:
             with open(os.devnull, "w") as fnull:
-                subprocess.call(['fastq-mcf'], stdout=fnull, stderr=fnull)
+                subprocess.call([self.executable], stdout=fnull, stderr=fnull)
         except OSError:
             self.logger.error(
                 'fastq-mcf not found, cannot use FastQMCFTrimSolo')
@@ -428,12 +429,12 @@ class FastQMCFTrimSolo(WorkflowStage):
         for i, fname in enumerate(stage_input):
             outfile_name = 'trimmed_' + os.path.basename(fname)
             outfile_path = os.path.join(self.outdir, outfile_name)
-            cmd = ['fastq-mcf', self.adapters, fname] + \
+            cmd = [self.executable, self.adapters, fname] + \
                 self.fastq_args.split() + ['-o', outfile_path]
 
             self.logger.info(
-                'Stripping adapters for file %d of %d', i + 1,
-                len(trimmed_files))
+                'Building file {0:d} of {1:d}: {2}'.format(
+                    i + 1, len(stage_input), outfile_path))
 
             self.logger.debug('Calling %s', str(cmd))
 
