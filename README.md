@@ -2,6 +2,7 @@ What Is It?
 -------------
 
 A Python library to make preprocessing of RNAseq files more convenient
+![RNAseqflow Build Status](https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow.png?style=shield&circle-token=:circle-token "RNAseqflow Build Status")
 
 Changelog
 -------------
