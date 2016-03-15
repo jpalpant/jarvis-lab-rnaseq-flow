@@ -123,7 +123,13 @@ class ArgFiller(object):
     logger = logging.getLogger('rnaseqflow.ArgFiller')
 
     def __init__(self, args):
-        """Store a reference to args and prepare path completion"""
+        """Store a reference to args and prepare path completion
+
+        Arguments:
+            args - any mutable object to which attributes can be added.  At
+                minimum, types.SimpleNamespace or argparse.Namespace will do,
+                but object() and None will not
+        """
 
         self.args = args
 
@@ -198,7 +204,7 @@ class ArgFiller(object):
     def _fill_root(self):
         """Fill in the --root argument with a valid root directory"""
 
-        if not self.args.root:
+        if not hasattr(self.args, 'root') or not os.path.isdir(self.args.root):
             print 'No root directory provided with --root'
             self.args.root = self._get_directory_input(
                 'Please enter a directory to use as the root folder: ')
@@ -206,7 +212,7 @@ class ArgFiller(object):
     def _fill_ext(self):
         """Fill in the --ext argument with a file type extension"""
 
-        if not self.args.ext:
+        if not hasattr(self.args, 'ext') or not self.args.ext:
             print 'No file extension provided with --ext'
             self.args.ext = raw_input(
                 "Please provide a file extension (e.g. .fastq, .fastq.gz): ")
@@ -214,7 +220,7 @@ class ArgFiller(object):
     def _fill_blocksize(self):
         """Fill in the --blocksize argument with a valid integer (in kB)"""
 
-        if not self.args.blocksize:
+        if not hasattr(self.args, 'blocksize') or not isinstance(self.args.blocksize, int) or not self.args.blocksize:
             print 'No blocksize for file copy operations given with --blocksize'
 
             self.args.blocksize = self._get_integer_input(
@@ -223,14 +229,14 @@ class ArgFiller(object):
     def _fill_adapters(self):
         """Fill in the --adapters argument with a valid file path"""
 
-        if not self.args.adapters:
+        if not hasattr(self.args, 'adapters') or not os.path.isfile(self.args.adapters):
             print "fasta adapter file not yet specified with --adapters"
             self.args.adapters = self._get_filepath_input(
                 "Please specify the .fasta adapter file location: ")
 
     def _fill_fastq_args(self):
 
-        if not self.args.fastq_args:
+        if not hasattr(self.args, 'fastq_args') or not self.args.fastq_args:
             print 'No fastq arguments provided to --fastq'
 
             self.args.fastq_args = raw_input(

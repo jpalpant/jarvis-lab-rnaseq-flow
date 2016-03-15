@@ -27,7 +27,7 @@ import argparse
 
 def opts():
     parser = argparse.ArgumentParser(
-        description='Preprocess RNAseq files.', 
+        description='Preprocess RNAseq files.',
         add_help=False, prog='rnaseqflow')
 
     parser.add_argument(
@@ -64,7 +64,7 @@ def opts():
     parser.add_argument(
         '--adapters',
         help='FastA adapters file to use')
-    
+
     parser.add_argument(
         '--fastq', dest='fastq_args',
         help='Specify arguments to be passed to fastq-mcf')
@@ -112,8 +112,8 @@ def main():
         except KeyError as e:
             logging.error(
                 'No valid stage specifier {0} - use "--help stages" to see '
-                'stage specifiers for this version'.format(stage_spec))
-            return
+                'stage specifiers for this software'.format(stage_spec))
+            raise
 
     w.run()
 
