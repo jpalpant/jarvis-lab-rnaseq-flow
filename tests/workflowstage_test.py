@@ -46,6 +46,7 @@ class TestWorkflow(unittest.TestCase):
     TRIM_FIXTURES = os.path.join(OUTPUTS, 'FastQMCFTrimSoloTest')
 
     ADAPTER_FILE = os.path.join(FIXTURES, 'test_adapters.fasta')
+    EXECUTABLE = os.path.join(FIXTURES, 'pinned-fastq-mcf')
 
     def setUp(self):
         self.w = Workflow()
@@ -126,7 +127,8 @@ class TestWorkflow(unittest.TestCase):
 
     def test_FastQMCFTrimSolo(self):
         args = Namespace(root=self.INPUTS, ext='.fastq', blocksize=1024,
-                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50')
+                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50',
+                         fastq=self.EXECUTABLE)
 
         finder = FindFiles(args)
         merger = MergeSplitFiles(args)
