@@ -28,6 +28,8 @@ import re
 import shutil
 import sys
 from abc import ABCMeta, abstractmethod, abstractproperty
+import readline
+readline.parse_and_bind("tab: complete")
 
 
 def trim(docstring):
@@ -84,15 +86,6 @@ class Workflow(object):
 
         self.items = []
 
-        try:
-            with open(os.devnull, "w") as fnull:
-                subprocess.call(['fastq-mcf'], stdout=fnull, stderr=fnull)
-        except OSError:
-            self.fastq = False
-        else:
-            self.logger.info('Using fastq-mcf')
-            self.fastq = True
-
         self.buffersize = 1024 * 1024  # in bytes; aka 128kB
         self.extension = '.fastq.gz'
 
@@ -127,115 +120,6 @@ class Workflow(object):
             next_input = item.execute(current_input)
             current_input = next_input
 
-        if not self.fastq:
-            self.logger.error("fastq-mcf wasn't found - terminating execution")
-            if not self.dummy:
-                return
-
-        self.out_folder = os.path.join(self.root_folder, 'preprocessed')
-
-        self.adapters = str(QFileDialog.getOpenFileName(parent=None,
-                                                        caption='Select adapters file'))
-
-        try:
-            os.makedirs(self.out_folder)
-        except OSError:
-            if not os.path.isdir(self.out_folder):
-                raise
-
-        print 'Enter the minimum quality q for fastq-mcf'
-        self.min_q = self.get_integer_input()
-
-        print 'Enter the value of the -l flag: '
-        self.l_value = self.get_integer_input()
-
-        self.logger.info('Finding all %s files', self.extension)
-        self.find_files(self.root_folder, '*' + self.extension)
-        self.logger.debug('Files found: %s', str(self.files))
-
-        self.logger.info('Organizing files')
-        self.organize_filenames()
-        self.logger.debug('Files organized: %s', str(self.file_groups))
-
-        self.logger.info('Merging files by group')
-        self.merge_files()
-        self.logger.debug('Merged files: %s', str(self.merged_files))
-
-        self.logger.info('Stripping adapters from merged files')
-        self.strip_files()
-        self.logger.debug('Stripped files: %s', str(self.stripped_files))
-
-    def organize_filenames(self):
-        """Organizes a list of paths by sequence_id, part number, and direction
-
-        This method requires that self.files already be populated.  If it is
-        not, this method will not do anything.  If it is, this method sets
-        self.file_groups to be a dictionary mapping
-            (sequence_id, dir):{part_num:path, part_num:path,...}
-        """
-
-        # Step 1: Group files by (sequence_id, direction) : [list of files]
-        initial_dict = {}
-
-        for path in self.files:
-            sequence_id = Workflow.get_sequence_id(os.path.basename(path))
-            direction = Workflow.get_direction_id(os.path.basename(path))
-
-            if not (sequence_id and direction):
-                continue
-
-            if (sequence_id, direction) in initial_dict:
-                initial_dict[(sequence_id, direction)].append(path)
-            else:
-                initial_dict[(sequence_id, direction)] = [path]
-
-        # Step 2: Replace [list of filenames] with a dict {part_num: path}
-        # The keys are the same as the previous dict, (sequence_id, dir) as key
-        self.file_groups = {}
-        for identifier, matched_files in initial_dict.items():
-            indexed_map = {}
-            for path in matched_files:
-                idx = Workflow.get_part_num(os.path.basename(path))
-                if idx is not 0:
-                    indexed_map[idx] = path
-
-            if indexed_map:
-                self.file_groups[identifier] = indexed_map
-
-    def merge_files(self):
-        """Merges all files in self.file_groups by group and places them in the
-        root directory self.out_folder"""
-        self.merged_files = []
-
-        for i, (fileid, files) in enumerate(self.file_groups.items()):
-            outfile_name = 'merged_' + \
-                fileid[0] + '_' + fileid[1] + self.extension
-            outfile_path = os.path.join(self.out_folder, outfile_name)
-            self.logger.info(
-                'Building file %d of %d: %s', i + 1, len(self.file_groups),
-                outfile_path)
-            with open(outfile_path, 'wb') as outfile:
-                for j in range(1, max(files.keys()) + 1):
-                    try:
-                        infile = files[j]
-                    except KeyError:
-                        self.logger.error(
-                            'Part %03d not found, terminating construction'
-                            ' of %s', j, outfile_path)
-                        break
-
-                    self.logger.debug(
-                        'Merging file %d of %d: %s', j, max(files.keys()),
-                        infile)
-
-                    if self.dummy:
-                        outfile.write('Dummy {:03d}\n'.format(j))
-                    else:
-                        shutil.copyfileobj(
-                            open(infile, 'rb'), outfile, self.buffersize)
-
-            self.merged_files.append(outfile_path)
-
     def strip_files(self):
         self.stripped_files = []
 
@@ -257,85 +141,6 @@ class Workflow(object):
             if os.path.isfile(outfile_path):
                 self.stripped_files.append(outfile_path)
 
-    def find_files(self, directory, pattern):
-        """Recursively walk a directory and return filenames matching pattern"""
-        self.files = []
-        for root, _, files in os.walk(directory):
-            for basename in files:
-                if fnmatch.fnmatch(basename, pattern):
-                    filename = os.path.join(root, basename)
-                    self.files.append(filename)
-
-    @staticmethod
-    def touch(path):
-        with open(path, 'a'):
-            os.utime(path, None)
-
-    @staticmethod
-    def get_sequence_id(filename):
-        """Gets the six-letter RNA sequence that identifies the RNAseq file
-
-        Returns a six character string that is the ID, or an empty string if no
-        identifying sequence is found."""
-
-        p = re.compile('.*[ACTG]{6}')
-
-        m = p.search(filename)
-        if m is None:
-            return ''
-        else:
-            return m.group()
-
-    @staticmethod
-    def get_direction_id(filename):
-        """Gets the direction identifier from an RNAseq filename
-
-        A direction identifier is either R01 or R02, indicating a forward or a
-        backwards read, respectively.
-        """
-
-        p = re.compile('R\d{1}')
-
-        m = p.search(filename)
-        if m is None:
-            return ''
-        else:
-            return m.group()
-
-    @staticmethod
-    def get_part_num(filename):
-        """Returns an integer indicating the file part number of the selected
-        RNAseq file
-
-        RNAseq files, due to their size, are split into many smaller files, each
-        of which is given a three digit file part number (e.g. 001, 010).  This
-        method returns that part number as an integer.
-
-        This requires that there only be one sequence of three digits in the
-        filename
-        """
-        p = re.compile('_\d{3}')
-
-        m = p.search(filename)
-        if m is None:
-            return 0
-        else:
-            text = m.group()
-            return int(text[1:])
-
-    def get_integer_input(self):
-        while True:
-            try:
-                input_value = int(raw_input('Please enter an integer: '))
-            except ValueError:
-                self.logger.warning(
-                    "That doesn't appear to be an integer, please try again.")
-                continue
-            else:
-                break
-
-        return input_value
-
 
 class WorkflowStage(object):
     """Interfaces for a stage of a Workflow
@@ -348,14 +153,14 @@ class WorkflowStage(object):
     logger = logging.getLogger('rnaseqflow.WorkflowStage')
 
     @abstractmethod
-    def run(self, input):
+    def run(self, stage_input):
         """Attempt to process the provided input according to the rules of the
         subclass
 
         Arguments:
-            input - an arbitrary input to be processed, usually a list of file
-                names or file-like objects.  The subclass must typecheck the
-                input as necessary, and define what input it takes
+            stage_input - an arbitrary input to be processed, usually a list of
+                file names or file-like objects.  The subclass must typecheck
+                the input as necessary, and define what input it takes
 
         Returns:
             output - the results of the processing of this workflow item
@@ -372,6 +177,20 @@ class WorkflowStage(object):
         pass
 
     @classmethod
+    def get_integer_input(cls, message):
+        while True:
+            try:
+                input_value = int(raw_input(message))
+            except ValueError:
+                cls.logger.warning(
+                    "That doesn't appear to be an integer, please try again.")
+                continue
+            else:
+                break
+
+        return input_value
+
+    @classmethod
     def shorthelp(cls):
         helpstrings = []
 
@@ -379,7 +198,8 @@ class WorkflowStage(object):
 
         for sub in all_subclasses(cls):
             helpstrings.append(
-                '{0}: {1}\n{2}\n'.format(sub.spec, sub.__name__, firstline(sub.__doc__)))
+                '{0}: {1}\n{2}\n'.format(
+                    sub.spec, sub.__name__, firstline(sub.__doc__)))
 
         helpstrings.append('Use "--help stages" for more details')
         return ''.join(helpstrings)
@@ -392,12 +212,13 @@ class WorkflowStage(object):
 
         for sub in all_subclasses(cls):
             helpstrings.append(
-                '{0}: {1}\n    {2}\n'.format(sub.spec, sub.__name__, sub.__doc__))
+                '{0}: {1}\n    {2}\n'.format(
+                    sub.spec, sub.__name__, sub.__doc__))
 
         return ''.join(helpstrings)
 
 
-class FindFilesRecursive(WorkflowStage):
+class FindFiles(WorkflowStage):
     """Find files recursively in a folder
 
     Input:
@@ -409,25 +230,57 @@ class FindFilesRecursive(WorkflowStage):
         --ext: the file extention to search for
     """
 
-    logger = logging.getLogger('rnaseqflow.WorkflowStage.FindFilesFlatItem')
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.FindFiles')
     spec = '1A'
 
+    def __init__(self, args):
+        """Prepare the recursive file finder
 
-class FindFilesFlat(WorkflowStage):
-    """Find files in a folder without recursion into subfolders
+        Check that a root directory is provided, or ask for one
+        Make sure the search extension is valid
+        """
 
-    Input:
-        No input is required for this WorkflowStage
-    Output:
-        A flat list of file path strings
-    Args used:
-        --root: the folder in which to start the search
-        --ext: the file extention to search for
-    """
+        if not args.root:
+            print 'No root directory provided with --root'
+            args.root = raw_input('Type the root directory path: ')
 
-    logger = logging.getLogger(
-        'rnaseqflow.WorkflowStage.FindFilesRecursiveItem')
-    spec = '1B'
+        self.root = args.root
+
+        if not os.path.isdir(self.root):
+            self.logger.error(
+                'Invalid root directory {0} provided, not a '
+                'directory'.format(self.root))
+            raise TypeError('Invalid root directory')
+
+        if not args.ext:
+            print 'No file extension provided with --ext'
+            args.ext = raw_input(
+                'Enter a file extension (e.g. .fastq, .fastq.gz): ')
+
+        self.ext = args.ext
+
+    def run(self, stage_input):
+        """Run the recursive file finding stage
+
+        Arguments:
+            stage_input - not used, only for the interface
+
+        Returns:
+            A flat list of files found with the correct extension
+        """
+
+        self.logger.info('Beginning stage')
+
+        outfiles = []
+        for root, _, files in os.walk(self.root):
+            for basename in files:
+                if fnmatch.fnmatch(basename, "*" + self.ext):
+                    filename = os.path.join(root, basename)
+                    outfiles.append(filename)
+
+        self.logger.info('Found {0} files'.format(len(outfiles)))
+
+        return outfiles
 
 
 class MergeSplitFiles(WorkflowStage):
@@ -438,11 +291,181 @@ class MergeSplitFiles(WorkflowStage):
     Output:
         A flat list of merged filenames
     Args used:
+        --root: the folder where merged files will be placed
+        --ext: the file extention to be used for the output files
         --blocksize: number of kilobytes to use as a copy block size
     """
 
-    logger = logging.getLogger('rnaseqflow.WorkflowStage.MergeSplitFilesItem')
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.MergeSplitFiles')
     spec = '2'
+
+    def __init__(self, args):
+        """Prepare for the merge file stage
+
+        Check for a root directory and a blocksize
+        """
+
+        if not args.root:
+            print 'No root directory provided with --root'
+            args.root = raw_input('Type the root directory path: ')
+
+        self.root = args.root
+
+        if not os.path.isdir(self.root):
+            self.logger.error(
+                'Invalid root directory {0} provided'
+                ', not a directory'.format(self.root))
+            raise TypeError('Invalid root directory')
+
+        self.outdir = os.path.join(self.root, 'merged')
+        try:
+            os.makedirs(self.outdir)
+        except OSError:
+            if not os.path.isdir(self.outdir):
+                raise
+
+        if not args.blocksize:
+            print 'No copy operation blocksize set with --blocksize'
+            args.blocksize = self.get_integer_input(
+                'Enter a blocksize in kB (e.g. 1024): ')
+
+        self.blocksize = args.blocksize
+
+        if not args.ext:
+            print 'No file extension provided with --ext'
+            args.ext = raw_input(
+                'Enter a file extension (e.g. .fastq, .fastq.gz): ')
+
+        self.ext = args.ext
+
+    def run(self, stage_input):
+        """Run the merge files operation
+
+        Arguments:
+            stage_input - a list of files to be organized and merged
+
+        Returns:
+            A flat list of merged files
+        """
+        self.logger.info('Beginning stage')
+
+        organized = self._organize_files(stage_input)
+
+        merged_files = []
+
+        for i, (fileid, files) in enumerate(organized.iteritems()):
+            outfile_name = 'merged_' + \
+                fileid[0] + '_' + fileid[1] + self.ext
+            outfile_path = os.path.join(self.outdir, outfile_name)
+
+            self.logger.info(
+                'Building file {0:d} of {1:d}: {2}'.format(
+                    i + 1, len(organized), outfile_path))
+
+            with open(outfile_path, 'wb') as outfile:
+                for j, infile in enumerate(files):
+                    if j != self._get_part_num(infile):
+                        self.logger.error(
+                            'Part {0:03d} not found, terminating construction'
+                            ' of {1}'.format(j, outfile_path))
+                        break
+
+                    self.logger.debug(
+                        'Merging file %d of %d: %s', j, max(files.keys()),
+                        infile)
+
+                    shutil.copyfileobj(
+                        open(infile, 'rb'), outfile, 1024 * self.blocksize)
+
+            merged_files.append(outfile_path)
+
+        self.logger.info('Created {0} merged files'.format(len(merged_files)))
+
+        return merged_files
+
+    def _organize_files(self, files):
+        """Organizes a list of paths by sequence_id, part number, and direction
+
+        Arguments:
+            files - a flat list of RNAseq file names
+
+        Returns:
+           A dictionary - (sequence_id, dir):list(paths in ascending order)
+        """
+
+        mapping = {}
+
+        for path in files:
+            sequence_id = self._get_sequence_id(os.path.basename(path))
+            direction = self._get_direction_id(os.path.basename(path))
+
+            if not (sequence_id and direction):
+                self.logger.warning('Discarding file {0} - could not find '
+                                    'sequence ID and direction using '
+                                    'regular expressions'.format(
+                                        os.path.basename(path)))
+                continue
+
+            try:
+                mapping[(sequence_id, direction)].append(path)
+            except KeyError:
+                mapping[(sequence_id, direction)] = [path]
+
+        for key, lst in mapping.iteritems():
+            mapping[key] = sorted(lst, key=self._get_part_num)
+
+    @staticmethod
+    def _get_sequence_id(filename):
+        """Gets the six-letter RNA sequence that identifies the RNAseq file
+
+        Returns a six character string that is the ID, or an empty string if no
+        identifying sequence is found."""
+
+        p = re.compile('.*[ACTG]{6}')
+
+        m = p.search(filename)
+        if m is None:
+            return ''
+        else:
+            return m.group()
+
+    @staticmethod
+    def _get_direction_id(filename):
+        """Gets the direction identifier from an RNAseq filename
+
+        A direction identifier is either R01 or R02, indicating a forward or a
+        backwards read, respectively.
+        """
+
+        p = re.compile('R\d{1}')
+
+        m = p.search(filename)
+        if m is None:
+            return ''
+        else:
+            return m.group()
+
+    @staticmethod
+    def _get_part_num(filename):
+        """Returns an integer indicating the file part number of the selected
+        RNAseq file
+
+        RNAseq files, due to their size, are split into many smaller files, each
+        of which is given a three digit file part number (e.g. 001, 010).  This
+        method returns that part number as an integer.
+
+        This requires that there only be one sequence of three digits in the
+        filename
+        """
+
+        p = re.compile('_\d{3}')
+
+        m = p.search(filename)
+        if m is None:
+            return 0
+        else:
+            text = m.group()
+            return int(text[1:])
 
 
 class FastQMCFTrimSolo(WorkflowStage):
@@ -453,11 +476,12 @@ class FastQMCFTrimSolo(WorkflowStage):
     Output:
         A flat list of trimmed file names
     Args used:
+        --root: the folder where merged files will be placed
         --adapters: the filepath of the fasta adapters file
         --fastq: a string of arguments to pass directly to fastq-mcf
     """
 
-    logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimItem')
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrim')
     spec = '3'
 
     def __init__(self, args):
@@ -467,34 +491,78 @@ class FastQMCFTrimSolo(WorkflowStage):
         Specify the fasta adapter file and any arguments
         """
 
+        if not args.root:
+            print 'No root directory provided with --root'
+            args.root = raw_input('Type the root directory path: ')
+
+        self.root = args.root
+
+        if not os.path.isdir(self.root):
+            self.logger.error(
+                'Invalid root directory {0} provided'
+                ', not a directory'.format(self.root))
+            raise TypeError('Invalid root directory')
+
+        self.outdir = os.path.join(self.root, 'trimmed')
+        try:
+            os.makedirs(self.outdir)
+        except OSError:
+            if not os.path.isdir(self.outdir):
+                raise
+
         try:
             with open(os.devnull, "w") as fnull:
-                subprocess.call([args.fastq], stdout=fnull, stderr=fnull)
+                subprocess.call(['fastq-mcf'], stdout=fnull, stderr=fnull)
         except OSError:
             self.logger.error(
-                'fastq-mcf not found, cannot use FastQMCFTrimItem')
+                'fastq-mcf not found, cannot use FastQMCFTrimSolo')
             raise
         else:
             self.logger.info('fastq-mcf found')
-            self.fastq_command = args.fastq
 
         if not args.adapters:
             print "fasta adapter file not yet specified"
-            self.adapters = raw_input(
+            args.adapters = raw_input(
                 "Please specify the .fasta adapter file location")
-        else:
-            self.adapters = args.adapters
+
+        self.adapters = args.adapters
 
         if not args.fastq_args:
             print "fastq arguments not yet specified"
-            self.fasta_args = raw_input(
+            args.fasta_args = raw_input(
                 "Please specify an optional .fastq argument string (e.g. '-q 30 -x 0.5'): ")
-        else:
-            self.fastq_args = args.fastq_args
 
+        self.fastq_args = args.fastq_args
 
-def main():
-    pass
+    def run(self, stage_input):
+        """Trim files one at a time using fastq-mcf
 
-if __name__ == '__main__':
-    main()
+        Arguments:
+            stage_input - a flat list of file names
+
+        Returns:
+            A flat list of trimmed file names
+        """
+
+        self.logger.info('Beginning stage')
+        trimmed_files = []
+
+        for i, fname in enumerate(stage_input):
+            outfile_name = 'trimmed_' + os.path.basename(fname)
+            outfile_path = os.path.join(self.outdir, outfile_name)
+            cmd = ['fastq-mcf', self.adapters, fname] + \
+                self.fastq_args.split() + ['-o', outfile_path]
+
+            self.logger.info(
+                'Stripping adapters for file %d of %d', i + 1,
+                len(self.merged_files))
+
+            self.logger.debug('Calling %s', str(cmd))
+
+            subprocess.call(cmd)
+
+            trimmed_files.append(outfile_path)
+
+        self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
+
+        return trimmed_files

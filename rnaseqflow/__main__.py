@@ -26,23 +26,34 @@ import argparse
 def opts():
     parser = argparse.ArgumentParser(
         description='Preprocess RNAseq files.', add_help=False, prog='rnaseqflow')
-    parser.add_argument('--stages', nargs='*',
-                        help='Add stages')
+
+    parser.add_argument(
+        '--stages', nargs='*',
+        help='Add stages')
+
     parser.add_argument(
         '--help', choices=('all', 'stages'),
-        nargs='?',
-        const='all',
+        nargs='?', const='all',
         help='display help for part of the program and exit')
+
+    parser.add_argument(
+        '--root',
+        help='The root directory to be searched for RNAseq files')
+    parser.add_argument(
+        '--ext',
+        help='The file extension to search for')
     
-    parser.add_argument('--root',
-                        help='The root directory to be searched for RNAseq files')
-    parser.add_argument('--ext',
-                        help='The file extension to search for')
-    
-    parser.add_argument('--adapters',
-                        help='FastA adapters file to use')
-    parser.add_argument('--fastq', dest='fastq_args',
-                        help='Specify arguments to be passed to fastq-mcf')
+    parser.add_argument(
+        '--blocksize',
+        type=int,
+        help='The size of the copy block (in kB) for merge operations')
+
+    parser.add_argument(
+        '--adapters',
+        help='FastA adapters file to use')
+    parser.add_argument(
+        '--fastq', dest='fastq_args',
+        help='Specify arguments to be passed to fastq-mcf')
 
     parser.add_argument(
         '--logging',
