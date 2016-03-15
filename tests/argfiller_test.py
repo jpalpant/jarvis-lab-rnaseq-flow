@@ -16,7 +16,7 @@ class Test(unittest.TestCase):
     FIXTURES = os.path.join(os.path.dirname(__file__),
                             'fixtures')
 
-    FASTAFILE = os.path.join(FIXTURES, 'test_adapters.fasta')
+    ADAPTER_FILE = os.path.join(FIXTURES, 'test_adapters.fasta')
 
     def setUp(self):
         self.empty_args = Namespace()
@@ -60,15 +60,15 @@ class Test(unittest.TestCase):
         self.assertEqual(self.empty_args.blocksize, 100)
 
     def test_fill_adapters(self):
-        with mock.patch('__builtin__.raw_input', return_value=self.FASTAFILE):
+        with mock.patch('__builtin__.raw_input', return_value=self.ADAPTER_FILE):
             self.af.fill(['adapters'])
 
-        self.assertEqual(self.empty_args.adapters, self.FASTAFILE)
+        self.assertEqual(self.empty_args.adapters, self.ADAPTER_FILE)
 
         with mock.patch('__builtin__.raw_input', return_value='junk'):
             self.af.fill(['adapters'])
 
-        self.assertEqual(self.empty_args.adapters, self.FASTAFILE)
+        self.assertEqual(self.empty_args.adapters, self.ADAPTER_FILE)
 
     def test_fill_fastq_args(self):
         with mock.patch('__builtin__.raw_input', return_value='-q 30'):

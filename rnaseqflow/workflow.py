@@ -149,7 +149,7 @@ class FindFiles(WorkflowStage):
     Input:
         No input is required for this WorkflowStage
     Output:
-        A flat list of file path strings
+        A flat set of file path strings
     Args used:
         --root: the folder in which to start the search
         --ext: the file extention to search for
@@ -166,7 +166,7 @@ class FindFiles(WorkflowStage):
         """
 
         argfiller = ArgFiller(args)
-        argfiller.fill(['root', 'ext', 'stuff'])
+        argfiller.fill(['root', 'ext'])
 
         self.root = args.root
         self.ext = args.ext
@@ -183,12 +183,12 @@ class FindFiles(WorkflowStage):
 
         self.logger.info('Beginning file find operations')
 
-        outfiles = []
+        outfiles = set()
         for root, _, files in os.walk(self.root):
             for basename in files:
                 if fnmatch.fnmatch(basename, "*" + self.ext):
                     filename = os.path.join(root, basename)
-                    outfiles.append(filename)
+                    outfiles.add(filename)
 
         self.logger.info('Found {0} files'.format(len(outfiles)))
 
@@ -199,9 +199,9 @@ class MergeSplitFiles(WorkflowStage):
     """Merge files by the identifying sequence and direction
 
     Input:
-        A flat list of files to be grouped and merged
+        An iterable of file names to be grouped and merged
     Output:
-        A flat list of merged filenames
+        A flat set of merged filenames
     Args used:
         --root: the folder where merged files will be placed
         --ext: the file extention to be used for the output files
@@ -247,7 +247,7 @@ class MergeSplitFiles(WorkflowStage):
 
         organized = self._organize_files(stage_input)
 
-        merged_files = []
+        merged_files = set()
 
         for i, (fileid, files) in enumerate(organized.iteritems()):
             outfile_name = 'merged_' + \
@@ -260,20 +260,20 @@ class MergeSplitFiles(WorkflowStage):
 
             with open(outfile_path, 'wb') as outfile:
                 for j, infile in enumerate(files):
-                    if j != self._get_part_num(infile):
+                    if j+1 != self._get_part_num(infile):
                         self.logger.error(
                             'Part {0:03d} not found, terminating construction'
                             ' of {1}'.format(j, outfile_path))
                         break
 
                     self.logger.debug(
-                        'Merging file %d of %d: %s', j, max(files.keys()),
+                        'Merging file %d of %d: %s', j, len(files),
                         infile)
 
                     shutil.copyfileobj(
                         open(infile, 'rb'), outfile, 1024 * self.blocksize)
 
-            merged_files.append(outfile_path)
+            merged_files.add(outfile_path)
 
         self.logger.info('Created {0} merged files'.format(len(merged_files)))
 
@@ -370,9 +370,9 @@ class FastQMCFTrimSolo(WorkflowStage):
     """Trim adapter sequences from files using fastq-mcf one file at a time
 
     Input:
-        A flat list of files to be passed into fastq-mcf file-by-file
+        A flat set of files to be passed into fastq-mcf file-by-file
     Output:
-        A flat list of trimmed file names
+        A flat set of trimmed file names
     Args used:
         --root: the folder where merged files will be placed
         --adapters: the filepath of the fasta adapters file
@@ -423,7 +423,7 @@ class FastQMCFTrimSolo(WorkflowStage):
         """
 
         self.logger.info('Beginning file trim operation')
-        trimmed_files = []
+        trimmed_files = set()
 
         for i, fname in enumerate(stage_input):
             outfile_name = 'trimmed_' + os.path.basename(fname)
@@ -433,13 +433,13 @@ class FastQMCFTrimSolo(WorkflowStage):
 
             self.logger.info(
                 'Stripping adapters for file %d of %d', i + 1,
-                len(self.merged_files))
+                len(trimmed_files))
 
             self.logger.debug('Calling %s', str(cmd))
 
             subprocess.call(cmd)
 
-            trimmed_files.append(outfile_path)
+            trimmed_files.add(outfile_path)
 
         self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
 
