@@ -23,15 +23,22 @@ RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 import sys
 import os
 import readline
-import re
 import logging
 import glob
 
-COMMANDS = ['']
-RE_SPACE = re.compile('.*\s+$', re.M)
-
 
 def trim(docstring):
+    """Trim a :pep:`0257` docstring
+
+    Code taken directly from :pep:`0257#handling-docstring-indentation`
+
+    :param docstring: a Python docstring
+    :type docstring: str
+
+    :returns: the first line of the docstring
+    :rtype: str
+    """
+
     if not docstring:
         return ''
     # Convert tabs to spaces (following the normal Python rules)
@@ -58,6 +65,15 @@ def trim(docstring):
 
 
 def firstline(docstring):
+    """Extract and return only the first line of a :pep:`0257` docstring
+
+    :param docstring: a Python docstring
+    :type docstring: str
+
+    :returns: the first line of the docstring
+    :rtype: str
+    """
+
     if not docstring:
         return ''
     # Convert tabs to spaces (following the normal Python rules)
@@ -68,6 +84,13 @@ def firstline(docstring):
 
 
 def all_subclasses(cls):
+    """Recursively generate all subclasses of cls
+
+    :param cls: a python class
+
+    :returns: all subclasses of cls
+    :rtype: list(cls)
+    """
     return cls.__subclasses__() + [g for s in cls.__subclasses__()
                                    for g in all_subclasses(s)]
 
@@ -83,8 +106,7 @@ class ArgFiller(object):
     def __init__(self, args):
         """Store a reference to args and prepare path completion
 
-        Arguments:
-            args - any mutable object to which attributes can be added.  At
+        :param args: any mutable object to which attributes can be added.  At
                 minimum, types.SimpleNamespace or argparse.Namespace will do,
                 but object() and None will not
         """
@@ -92,6 +114,11 @@ class ArgFiller(object):
         self.args = args
 
     def set_path_complete(self, enable):
+        """Enable or disable readline pathcompletion
+
+        :param enable: enable or disable completion
+        :type enable: bool
+        """
         if enable:
             readline.set_completer_delims('\t')
             readline.parse_and_bind("tab: complete")
@@ -111,7 +138,10 @@ class ArgFiller(object):
     def fill(self, args_needed):
         """Add the needed arguments to self.args if they are not there
 
-        Asks the user for input for each of the arguments
+        Asks the user for input for each of the missing arguments
+
+        :param args_needed: a list of attributes to ensure self.args contains
+        :type args_needed: list(str)
         """
 
         for arg in args_needed:
@@ -129,7 +159,11 @@ class ArgFiller(object):
 
     @classmethod
     def _get_integer_input(cls, message):
-        """Ask the user to enter an integer in the command line"""
+        """Ask the user to enter an integer in the command line
+
+        :param message: a message to display with raw_input
+        :type message: str
+        """
 
         while True:
             try:
@@ -145,7 +179,11 @@ class ArgFiller(object):
 
     @classmethod
     def _get_directory_input(cls, message):
-        """Ask the user to enter a directory path in the command line"""
+        """Ask the user to enter a directory path in the command line
+
+        :param message: a message to display with raw_input
+        :type message: str
+        """
 
         while True:
             input_value = raw_input(message)
@@ -160,7 +198,11 @@ class ArgFiller(object):
 
     @classmethod
     def _get_filepath_input(cls, message):
-        """Ask the user to enter a file path in the command line"""
+        """Ask the user to enter a file path in the command line
+
+        :param message: a message to display with raw_input
+        :type message: str
+        """
 
         while True:
             input_value = raw_input(message)
@@ -174,7 +216,7 @@ class ArgFiller(object):
         return input_value
 
     def _fill_root(self):
-        """Fill in the --root argument with a valid root directory"""
+        """Fill in self.args.root with a valid root directory"""
 
         if not (hasattr(self.args, 'root') and
                 self.args.root and
@@ -184,7 +226,7 @@ class ArgFiller(object):
                 'Please enter a directory to use as the root folder: ')
 
     def _fill_ext(self):
-        """Fill in the --ext argument with a file type extension"""
+        """Fill in self.args.ext with a file type extension"""
 
         if not hasattr(self.args, 'ext') or not self.args.ext:
             print 'No file extension provided with --ext'
@@ -192,7 +234,7 @@ class ArgFiller(object):
                 "Please provide a file extension (e.g. .fastq, .fastq.gz): ")
 
     def _fill_blocksize(self):
-        """Fill in the --blocksize argument with a valid integer (in kB)"""
+        """Fill in self.args.blocksize with a valid integer (in kB)"""
 
         if not (hasattr(self.args, 'blocksize') and
                 isinstance(self.args.blocksize, int) and
@@ -203,7 +245,7 @@ class ArgFiller(object):
                 'Please provide a blocksize in kB (e.g. 1024): ')
 
     def _fill_adapters(self):
-        """Fill in the --adapters argument with a valid file path"""
+        """Fill in self.args.adapters with a valid file path"""
 
         if not (hasattr(self.args, 'adapters') and
                 self.args.adapters and
@@ -213,7 +255,7 @@ class ArgFiller(object):
                 "Please specify the .fasta adapter file location: ")
 
     def _fill_fastq_args(self):
-        """Fill in the arguments to be passed to fastq"""
+        """Fill in self.args.fastq_args"""
 
         if not (hasattr(self.args, 'fastq_args') and self.args.fastq_args):
             print 'No fastq arguments provided to --fastq_args'
@@ -223,14 +265,13 @@ class ArgFiller(object):
                 ' here (e.g. "-q 30 -x 0.5"): ')
 
     def _fill_fastq(self):
-        """Fill in the fastq-mcf executable argument with a default"""
+        """Fill in the fastq-mcf executable self.args.fastq with a default 'fastq-mcf'"""
 
         if not (hasattr(self.args, 'fastq') and self.args.fastq):
             self.args.fastq = 'fastq-mcf'
-            
+
     def _fill_quiet(self):
-        """Fill in the quiet argument with default False"""
-        
+        """Fill in the quiet argument self.args.quiet with default False"""
+
         if not (hasattr(self.args, 'quiet') and self.args.quiet):
             self.args.quiet = False
-            

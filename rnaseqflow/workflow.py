@@ -37,10 +37,11 @@ class Workflow(object):
     Execute a simple series of steps used to preprocess RNAseq files
     """
     logger = logging.getLogger('rnaseqflow.Workflow')
+    """log4j-style class logger"""
 
     def __init__(self):
         """
-        Initialize a workflow by checking for necessary shell programs
+        Initialize an empty workflow with no stages
         """
 
         self.items = []
@@ -48,8 +49,8 @@ class Workflow(object):
     def append(self, item):
         """Add a WorkflowStage to the workflow
 
-        Arguments:
-            item - a WorkflowStage to execute
+        :param item: the WorkflowStage to insert
+        :type item: WorkflowStage
         """
 
         self.items.append(item)
@@ -57,8 +58,11 @@ class Workflow(object):
     def insert(self, idx, item):
         """Insert a WorkflowStage into the workflow
 
-        Arguments:
-            item - a WorkflowStage to execute
+        :param idx: list index for insertion
+        :type idx: int
+
+        :param item: the WorkflowStage to insert
+        :type item: WorkflowStage
         """
 
         self.items.insert(idx, item)
@@ -78,27 +82,31 @@ class Workflow(object):
 
 
 class WorkflowStage(object):
-    """Interfaces for a stage of a Workflow
+    """Interface for a stage of a Workflow
 
     Subclasses must override the run method, which takes and verifies arbitrary
     input, processes it, and returns some output
+
+    They must also provide a .spec property which is a short string to be used
+    to select the specific WorkflowStage from many options.  These should not
+    overlap, but at the moment no checking is done to see if they do.
     """
     __metaclass__ = ABCMeta
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage')
+    """log4j-style class logger"""
 
     @abstractmethod
     def run(self, stage_input):
         """Attempt to process the provided input according to the rules of the
         subclass
 
-        Arguments:
-            stage_input - an arbitrary input to be processed, usually a list of
+        :param stage_input: an arbitrary input to be processed, usually a list of
                 file names or file-like objects.  The subclass must typecheck
                 the input as necessary, and define what input it takes
+        :type stage_input: object
 
-        Returns:
-            output - the results of the processing of this workflow item
+        :returns: the results of the subclass's processing
         """
         pass
 
@@ -113,6 +121,11 @@ class WorkflowStage(object):
 
     @classmethod
     def shorthelp(cls):
+        """Create a short help text with one line for each subclass of WorkflowStage
+
+        Subclasses are found using cliutils.all_subclasses
+        """
+
         helpstrings = []
 
         helpstrings.append('The following WorkflowStages are available:\n')
@@ -127,6 +140,10 @@ class WorkflowStage(object):
 
     @classmethod
     def longhelp(cls):
+        """Create a long help text with full docstrings for each subclass of WorkflowStage
+
+        Subclasses are found using cliutils.all_subclasses
+        """
         helpstrings = []
 
         helpstrings.append('The following WorkflowStages are available:\n')
@@ -147,18 +164,24 @@ class FindFiles(WorkflowStage):
     Output:
         A flat set of file path strings
     Args used:
-        --root: the folder in which to start the search
-        --ext: the file extention to search for
+        * --root: the folder in which to start the search
+        * --ext: the file extention to search for
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.FindFiles')
+    """log4j-style class-logger"""
+
     spec = '1'
+    """FindFiles uses '1' as its specifier"""
 
     def __init__(self, args):
         """Prepare the recursive file finder
 
         Check that a root directory is provided, or ask for one
         Make sure the search extension is valid
+
+        :param args: an object with settable and gettable attributes
+        :type args: Namespace, SimpleNamespace, etc.
         """
 
         argfiller = ArgFiller(args)
@@ -170,11 +193,11 @@ class FindFiles(WorkflowStage):
     def run(self, stage_input):
         """Run the recursive file finding stage
 
-        Arguments:
-            stage_input - not used, only for the interface
+        :param stage_input: not used, only for the interface
+        :type stage_input: object, None
 
-        Returns:
-            A flat list of files found with the correct extension
+        :returns: A flat set of files found with the correct extension
+        :rtype: set(str)
         """
 
         self.logger.info('Beginning file find operations')
@@ -199,18 +222,24 @@ class MergeSplitFiles(WorkflowStage):
     Output:
         A flat set of merged filenames
     Args used:
-        --root: the folder where merged files will be placed
-        --ext: the file extention to be used for the output files
-        --blocksize: number of kilobytes to use as a copy block size
+       * --root: the folder where merged files will be placed
+       * --ext: the file extention to be used for the output files
+       * --blocksize: number of kilobytes to use as a copy block size
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.MergeSplitFiles')
+    """log4j-style class-logger"""
+
     spec = '2'
+    """MergeSplitFiles uses '2' as its specifier"""
 
     def __init__(self, args):
         """Prepare for the merge file stage
 
         Check for a root directory and a blocksize
+
+        :param args: an object with settable and gettable attributes
+        :type args: Namespace, SimpleNamespace, etc.
         """
 
         argfiller = ArgFiller(args)
@@ -233,11 +262,18 @@ class MergeSplitFiles(WorkflowStage):
     def run(self, stage_input):
         """Run the merge files operation
 
-        Arguments:
-            stage_input - a list of files to be organized and merged
+        Creates a directory merged under the root directory and fills it with
+        files concatenated from individual parts of large RNAseq data files
 
-        Returns:
-            A flat list of merged files
+        Files are grouped and ordered by searching the file basename for a
+        sequence identifier like AACTAG, a direction like R1, and a part number
+        formatted 001
+
+        :param stage_input: file names to be organized and merged
+        :type stage_input: iterable(str)
+
+        :returns: a set of organized files
+        :rtype: set(str)
         """
         self.logger.info('Beginning file merge operations')
 
@@ -278,11 +314,16 @@ class MergeSplitFiles(WorkflowStage):
     def _organize_files(self, files):
         """Organizes a list of paths by sequence_id, part number, and direction
 
-        Arguments:
-            files - a flat list of RNAseq file names
+        Uses regular expressions to find the six-character sequence ID, the
+        three character integer part number, and the direction (R1 or R2)
 
-        Returns:
-           A dictionary - (sequence_id, dir):list(paths in ascending order)
+        :param files: filenames to be organized
+        :type files: iterable(str)
+
+        :returns: organized files in a dictionary mapping the sequence ID and
+            direction to the files that have that ID, sorted in ascending part
+            number
+        :rtype: dict(tuple:list)
         """
 
         mapping = {}
@@ -313,7 +354,14 @@ class MergeSplitFiles(WorkflowStage):
         """Gets the six-letter RNA sequence that identifies the RNAseq file
 
         Returns a six character string that is the ID, or an empty string if no
-        identifying sequence is found."""
+        identifying sequence is found.
+
+        :param filename: the base filename to be processed
+        :type filename: str
+
+        :returns: the file's sequence ID, six characters of ACTG
+        :rtype: string
+        """
 
         p = re.compile('.*[ACTG]{6}')
 
@@ -327,8 +375,14 @@ class MergeSplitFiles(WorkflowStage):
     def _get_direction_id(filename):
         """Gets the direction identifier from an RNAseq filename
 
-        A direction identifier is either R01 or R02, indicating a forward or a
+        A direction identifier is either R1 or R2, indicating a forward or a
         backwards read, respectively.
+
+        :param filename: the base filename to be processed
+        :type filename: str
+
+        :returns: the file's direction ID, R1 or R2
+        :rtype: string
         """
 
         p = re.compile('R\d{1}')
@@ -350,6 +404,12 @@ class MergeSplitFiles(WorkflowStage):
 
         This requires that there only be one sequence of three digits in the
         filename
+
+        :param filename: the base filename to be processed
+        :type filename: str
+
+        :returns: the file's part number
+        :rtype: int
         """
 
         p = re.compile('_\d{3}')
@@ -370,22 +430,29 @@ class FastQMCFTrimSolo(WorkflowStage):
     Output:
         A flat set of trimmed file names
     Args used:
-        --root: the folder where trimmed files will be placed
-        --adapters: the filepath of the fasta adapters file
-        --fastq: the location of the fastq-mcf executable
-        --fastq_args: a string of arguments to pass directly to fastq-mcf
-        --quiet: silence fastq-mcf's output if given
+       * --root: the folder where trimmed files will be placed
+       * --adapters: the filepath of the fasta adapters file
+       * --fastq: the location of the fastq-mcf executable
+       * --fastq_args: a string of arguments to pass directly to fastq-mcf
+       * --quiet: silence fastq-mcf's output if given
 
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimSolo')
+    """log4j-style class-logger"""
+
     spec = '3.0'
+    """FastQMCFTrimSolo uses '3.0' as its specifier"""
 
     def __init__(self, args):
-        """Run all checks needed to create a FastQMCFTrimItem
+        """Run all checks needed to create a FastQMCFTrimSolo object
 
         Check that fastq-mcf exists in the system
         Specify the fasta adapter file and any arguments
+        Create the output folder
+
+        :param args: an object with settable and gettable attributes
+        :type args: Namespace, SimpleNamespace, etc.
         """
         argfiller = ArgFiller(args)
         argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args', 'quiet'])
@@ -416,11 +483,11 @@ class FastQMCFTrimSolo(WorkflowStage):
     def run(self, stage_input):
         """Trim files one at a time using fastq-mcf
 
-        Arguments:
-            stage_input - a flat list of file names
+        :param stage_input: filenames to be processed
+        :type stage_input: iterable(str)
 
-        Returns:
-            A flat list of trimmed file names
+        :returns: a set of filenames holding the processed files
+        :rtype: set(str)
         """
 
         self.logger.info('Beginning file trim operation')
@@ -443,7 +510,7 @@ class FastQMCFTrimSolo(WorkflowStage):
                     subprocess.call(cmd, stdout=nullfile, stderr=nullfile)
             else:
                 subprocess.call(cmd)
-                
+
             trimmed_files.add(outfile_path)
 
         self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
@@ -459,21 +526,28 @@ class FastQMCFTrimPairs(WorkflowStage):
     Output:
         A flat set of trimmed file names
     Args used:
-        --root: the folder where trimmed files will be placed
-        --adapters: the filepath of the fasta adapters file
-        --fastq: the location of the fastq-mcf executable
-        --fastq_args: a string of arguments to pass directly to fastq-mcf
-        --quiet: silence fastq-mcf's output if given
+       * --root: the folder where trimmed files will be placed
+       * --adapters: the filepath of the fasta adapters file
+       * --fastq: the location of the fastq-mcf executable
+       * --fastq_args: a string of arguments to pass directly to fastq-mcf
+       * --quiet: silence fastq-mcf's output if given
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimPairs')
+    """log4j-style class-logger"""
+
     spec = '3.1'
+    """FastQMCFTrimPairs uses '3.1' as its specifier"""
 
     def __init__(self, args):
-        """Run all checks needed to create a FastQMCFTrimPairs
+        """Run all checks needed to create a FastQMCFTrimPairs object
 
         Check that fastq-mcf exists in the system
         Specify the fasta adapter file and any arguments
+        Create the output folder
+
+        :param args: an object with settable and gettable attributes
+        :type args: Namespace, SimpleNamespace, etc.
         """
         argfiller = ArgFiller(args)
         argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args', 'quiet'])
@@ -504,11 +578,11 @@ class FastQMCFTrimPairs(WorkflowStage):
     def run(self, stage_input):
         """Trim files one at a time using fastq-mcf
 
-        Arguments:
-            stage_input - a flat list of file names
+        :param stage_input: filenames to be processed
+        :type stage_input: iterable(str)
 
-        Returns:
-            A flat list of trimmed file names
+        :returns: a set of filenames holding the processed files
+        :rtype: set(str)
         """
 
         self.logger.info('Beginning file trim operation')
@@ -517,12 +591,12 @@ class FastQMCFTrimPairs(WorkflowStage):
 
         trimmed_files = set()
         prog_count = 0
-        
+
         for f1, f2 in pairs:
             outfile_name_1 = 'trimmed_' + os.path.basename(f1)
             outfile_path_1 = os.path.join(self.outdir, outfile_name_1)
             prog_count += 1
-            
+
             if f2:
                 prog_count += 1
                 outfile_name_2 = 'trimmed_' + os.path.basename(f2)
@@ -534,7 +608,7 @@ class FastQMCFTrimPairs(WorkflowStage):
 
                 self.logger.info(
                     'Building files {0:d} and {1:d} of {2:d}: {3} and {4}'.format(
-                        prog_count-1, prog_count, len(stage_input), outfile_path_1, outfile_path_2))
+                        prog_count - 1, prog_count, len(stage_input), outfile_path_1, outfile_path_2))
 
                 self.logger.debug('Calling %s', str(cmd))
             else:
@@ -563,22 +637,22 @@ class FastQMCFTrimPairs(WorkflowStage):
     def _find_file_pairs(self, files):
         """Finds pairs of forward and backward read files
 
-        Arguments:
-            files - a flat set of files
+        :param files: filenames to be paired and trimmed
+        :type files: iterable(str)
 
-        Returns:
-            a set of pairs (f1, f2) that are pair files, forward and backward
 
+        :returns: pairs (f1, f2) that are paired files, forward and backward
             If a file f1 does not have a mate, f2 will be None, and the file
             will be trimmed without a mate
+        :rtype: set(tuple(str, str))
         """
 
         pairs = set()
 
         for f in files:
             pair = next(f2 for f2 in files if (
-                    self._get_sequence_id(f2) == self._get_sequence_id(f) and
-                    f2 != f))
+                self._get_sequence_id(f2) == self._get_sequence_id(f) and
+                f2 != f))
             pairs.add(tuple(fn for fn in sorted([f, pair])))
 
         return pairs
@@ -588,7 +662,14 @@ class FastQMCFTrimPairs(WorkflowStage):
         """Gets the six-letter RNA sequence that identifies the RNAseq file
 
         Returns a six character string that is the ID, or an empty string if no
-        identifying sequence is found."""
+        identifying sequence is found.
+
+        :param filename: the base filename to be processed
+        :type filename: str
+
+        :returns: the file's sequence ID, six characters of ACTG
+        :rtype: string
+        """
 
         p = re.compile('.*[ACTG]{6}')
 
