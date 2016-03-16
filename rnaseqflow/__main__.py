@@ -17,7 +17,9 @@ PARTICULAR PURPOSE. See the GNU General Public License for more details.
 You should have received a copy of the GNU General Public License along with
 RNAseq Workflow. If not, see http://www.gnu.org/licenses/.
 '''
-from workflow import Workflow, WorkflowStage, all_subclasses
+from workflow import Workflow, WorkflowStage
+from cliutils import all_subclasses
+
 import logging
 import os
 import argparse
@@ -25,35 +27,13 @@ import argparse
 
 def opts():
     parser = argparse.ArgumentParser(
-        description='Preprocess RNAseq files.', add_help=False, prog='rnaseqflow')
-
-    parser.add_argument(
-        '--stages', nargs='*',
-        help='Add stages')
+        description='Preprocess RNAseq files.',
+        add_help=False, prog='rnaseqflow')
 
     parser.add_argument(
         '--help', choices=('all', 'stages'),
         nargs='?', const='all',
         help='display help for part of the program and exit')
-
-    parser.add_argument(
-        '--root',
-        help='The root directory to be searched for RNAseq files')
-    parser.add_argument(
-        '--ext',
-        help='The file extension to search for')
-    
-    parser.add_argument(
-        '--blocksize',
-        type=int,
-        help='The size of the copy block (in kB) for merge operations')
-
-    parser.add_argument(
-        '--adapters',
-        help='FastA adapters file to use')
-    parser.add_argument(
-        '--fastq', dest='fastq_args',
-        help='Specify arguments to be passed to fastq-mcf')
 
     parser.add_argument(
         '--logging',
@@ -64,6 +44,35 @@ def opts():
     parser.add_argument(
         '--version',
         action='version', version='%(prog)s 0.2.0')
+
+    parser.add_argument(
+        '--stages', nargs='*',
+        help='Add stages')
+
+    parser.add_argument(
+        '--root',
+        help='The root directory to be searched for RNAseq files')
+    parser.add_argument(
+        '--ext',
+        help='The file extension to search for')
+
+    parser.add_argument(
+        '--blocksize',
+        type=int,
+        help='The size of the copy block (in kB) for merge operations')
+
+    parser.add_argument(
+        '--adapters',
+        help='FastA adapters file to use')
+
+    parser.add_argument(
+        '--fastq',
+        help='Location of the fastq-mcf executable',
+        default='fastq-mcf')
+
+    parser.add_argument(
+        '--fastq_args',
+        help='Specify arguments to be passed to fastq-mcf')
 
     return parser
 
@@ -76,6 +85,8 @@ def main():
     """
 
     args = opts().parse_args()
+
+    print 'Adapters? {0}, {1}'.format(hasattr(args, 'adapters'), args.adapters)
 
     if args.help == 'all':
         opts().print_help()
@@ -96,22 +107,22 @@ def main():
         print 'Stages not given with --stages argument'
         print WorkflowStage.shorthelp()
         stages = raw_input(
-            'Enter space separated stage specifiers (e.g. "1A 2 3"): ')
+            'Enter space separated stage specifiers (e.g. "1A 2 3"): ').split()
     else:
         stages = args.stages
 
     classmap = {cls.spec: cls for cls in all_subclasses(WorkflowStage)}
 
-    for stage_spec in stages.split():
+    for stage_spec in stages:
         try:
-            w.append(classmap[stage_spec]())
+            w.append(classmap[stage_spec](args))
         except KeyError as e:
             logging.error(
                 'No valid stage specifier {0} - use "--help stages" to see '
-                'stage specifiers for this version'.format(stage_spec))
-            return
+                'stage specifiers for this software'.format(stage_spec))
+            raise
 
-    w.execute()
+    w.run()
 
 if __name__ == '__main__':
     main()
