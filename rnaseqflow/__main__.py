@@ -72,7 +72,7 @@ def opts():
     parser.add_argument(
         '--fastq_args',
         help='Specify arguments to be passed to fastq-mcf')
-    
+
     parser.add_argument(
         '--quiet',
         action='store_true',
@@ -82,10 +82,15 @@ def opts():
 
 
 def main():
-    """This method is called when you use python -m {package}
+    """This method is installed as a console script entry point by setuptools
 
-    It requires that all the important packages be
-    available in the Python path, correctly installed.
+    It uses the command line arguments specified by opts() to generate a
+    Workflow object and adds to it several WorkflowStages.
+
+    If the needed command line arguments are not passed, the user is asked to
+    enter them.
+
+    The generated Workflow object is then executed with run() 
     """
 
     args = opts().parse_args()
@@ -109,7 +114,7 @@ def main():
         print 'Stages not given with --stages argument'
         print WorkflowStage.shorthelp()
         stages = raw_input(
-            'Enter space separated stage specifiers (e.g. "1A 2 3"): ').split()
+            'Enter space separated stage specifiers (e.g. "1 2 3"): ').split()
     else:
         stages = args.stages
 

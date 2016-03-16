@@ -6,12 +6,23 @@
 Welcome to rnaseqflow's documentation!
 ======================================
 
-Contents:
+Contents
+-----------
 
 .. toctree::
    :maxdepth: 2
+   
+   readme <README>
+   usage
+   installation
+   
+API/Reference Docs
+--------------------
 
-
+.. toctree::
+   :maxdepth: 2
+   
+   ref_rnaseqflow
 
 Indices and tables
 ==================
@@ -19,4 +30,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
