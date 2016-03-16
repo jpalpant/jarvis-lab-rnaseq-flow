@@ -1,8 +1,7 @@
 ## Customize dependencies
 dependencies:
   pre:
-##    - svn checkout http://ea-utils.googlecode.com/svn/trunk/ ~/ea-utils/
-##    - pushd ~/ea-utils/clipper && BINDIR=/home/ubuntu/bin/ make install && popd
-    
+    - if test "$(which fastq-mcf)" == ''; then svn checkout http://ea-utils.googlecode.com/svn/trunk/ ~/ea-utils/; fi
+    - if test "$(which fastq-mcf)" == ''; then pushd ~/ea-utils/clipper && BINDIR=/home/ubuntu/bin/ make install && popd; fi
   cache_directories:
     - "/home/ubuntu/bin"
