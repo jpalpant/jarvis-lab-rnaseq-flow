@@ -32,7 +32,7 @@ def opts():
     parser.add_argument(
         '--help', choices=('all', 'stages'),
         nargs='?', const='all',
-        help='display help for part of the program and exit')
+        help='Display this help or detailed help on a topic')
 
     parser.add_argument(
         '--logging',
@@ -72,6 +72,11 @@ def opts():
     parser.add_argument(
         '--fastq_args',
         help='Specify arguments to be passed to fastq-mcf')
+    
+    parser.add_argument(
+        '--quiet',
+        action='store_true',
+        help='Silence extraneous console output')
 
     return parser
 
@@ -94,7 +99,7 @@ def main():
 
     logging.basicConfig(
         level=getattr(logging, args.logging.upper()),
-        format='%(asctime)s in %(name)s - %(message)s',
+        format='%(levelname)s: %(asctime)s in %(name)s - %(message)s',
         datefmt='%m/%d/%Y %I:%M:%S %p'
     )
 
