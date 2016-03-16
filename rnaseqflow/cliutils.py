@@ -253,5 +253,11 @@ class ArgFiller(object):
         """Fill in the fastq-mcf executable argument with a default"""
 
         if not (hasattr(self.args, 'fastq') and self.args.fastq):
-
             self.args.fastq = 'fastq-mcf'
+            
+    def _fill_quiet(self):
+        """Fill in the quiet argument with default False"""
+        
+        if not (hasattr(self.args, 'quiet') and self.args.quiet):
+            self.args.quiet = False
+            

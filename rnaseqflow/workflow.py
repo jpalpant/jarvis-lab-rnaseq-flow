@@ -374,10 +374,12 @@ class FastQMCFTrimSolo(WorkflowStage):
         --adapters: the filepath of the fasta adapters file
         --fastq: the location of the fastq-mcf executable
         --fastq_args: a string of arguments to pass directly to fastq-mcf
+        --quiet: silence fastq-mcf's output if given
+
     """
 
     logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimSolo')
-    spec = '3'
+    spec = '3.0'
 
     def __init__(self, args):
         """Run all checks needed to create a FastQMCFTrimItem
@@ -386,12 +388,13 @@ class FastQMCFTrimSolo(WorkflowStage):
         Specify the fasta adapter file and any arguments
         """
         argfiller = ArgFiller(args)
-        argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args'])
+        argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args', 'quiet'])
 
         self.root = args.root
         self.adapters = args.adapters
         self.fastq_args = args.fastq_args
         self.executable = args.fastq
+        self.quiet = args.quiet
 
         self.outdir = os.path.join(self.root, 'trimmed')
         try:
@@ -435,10 +438,162 @@ class FastQMCFTrimSolo(WorkflowStage):
 
             self.logger.debug('Calling %s', str(cmd))
 
-            subprocess.call(cmd)
-
+            if self.quiet:
+                with open(os.devnull, 'w') as nullfile:
+                    subprocess.call(cmd, stdout=nullfile, stderr=nullfile)
+            else:
+                subprocess.call(cmd)
+                
             trimmed_files.add(outfile_path)
 
         self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
 
         return trimmed_files
+
+
+class FastQMCFTrimPairs(WorkflowStage):
+    """Trim adapter sequences from files using fastq-mcf in paired-end mode
+
+    Input:
+        A flat set of files to be passed into fastq-mcf in pairs
+    Output:
+        A flat set of trimmed file names
+    Args used:
+        --root: the folder where trimmed files will be placed
+        --adapters: the filepath of the fasta adapters file
+        --fastq: the location of the fastq-mcf executable
+        --fastq_args: a string of arguments to pass directly to fastq-mcf
+        --quiet: silence fastq-mcf's output if given
+    """
+
+    logger = logging.getLogger('rnaseqflow.WorkflowStage.FastQMCFTrimPairs')
+    spec = '3.1'
+
+    def __init__(self, args):
+        """Run all checks needed to create a FastQMCFTrimPairs
+
+        Check that fastq-mcf exists in the system
+        Specify the fasta adapter file and any arguments
+        """
+        argfiller = ArgFiller(args)
+        argfiller.fill(['root', 'adapters', 'fastq', 'fastq_args', 'quiet'])
+
+        self.root = args.root
+        self.adapters = args.adapters
+        self.fastq_args = args.fastq_args
+        self.executable = args.fastq
+        self.quiet = args.quiet
+
+        self.outdir = os.path.join(self.root, 'trimmed')
+        try:
+            os.makedirs(self.outdir)
+        except OSError:
+            if not os.path.isdir(self.outdir):
+                raise
+
+        try:
+            with open(os.devnull, "w") as fnull:
+                subprocess.call([self.executable], stdout=fnull, stderr=fnull)
+        except OSError:
+            self.logger.error(
+                'fastq-mcf not found, cannot use FastQMCFTrimPairs')
+            raise
+        else:
+            self.logger.info('fastq-mcf found')
+
+    def run(self, stage_input):
+        """Trim files one at a time using fastq-mcf
+
+        Arguments:
+            stage_input - a flat list of file names
+
+        Returns:
+            A flat list of trimmed file names
+        """
+
+        self.logger.info('Beginning file trim operation')
+
+        pairs = self._find_file_pairs(stage_input)
+
+        trimmed_files = set()
+        prog_count = 0
+        
+        for f1, f2 in pairs:
+            outfile_name_1 = 'trimmed_' + os.path.basename(f1)
+            outfile_path_1 = os.path.join(self.outdir, outfile_name_1)
+            prog_count += 1
+            
+            if f2:
+                prog_count += 1
+                outfile_name_2 = 'trimmed_' + os.path.basename(f2)
+                outfile_path_2 = os.path.join(self.outdir, outfile_name_2)
+
+                cmd = [self.executable, self.adapters, f1, f2] + \
+                    self.fastq_args.split() + \
+                    ['-o', outfile_path_1, '-o', outfile_path_2]
+
+                self.logger.info(
+                    'Building files {0:d} and {1:d} of {2:d}: {3} and {4}'.format(
+                        prog_count-1, prog_count, len(stage_input), outfile_path_1, outfile_path_2))
+
+                self.logger.debug('Calling %s', str(cmd))
+            else:
+                cmd = [self.executable, self.adapters, f1] + \
+                    self.fastq_args.split() + ['-o', outfile_path_1]
+
+                self.logger.info(
+                    'Building file {0:d} of {1:d}: {2}'.format(
+                        prog_count, len(stage_input), outfile_path_1))
+
+            self.logger.debug('Calling %s', str(cmd))
+
+            if self.quiet:
+                with open(os.devnull, 'w') as nullfile:
+                    subprocess.call(cmd, stdout=nullfile, stderr=nullfile)
+            else:
+                subprocess.call(cmd)
+
+            trimmed_files.add(outfile_path_1)
+            trimmed_files.add(outfile_path_2)
+
+        self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
+
+        return trimmed_files
+
+    def _find_file_pairs(self, files):
+        """Finds pairs of forward and backward read files
+
+        Arguments:
+            files - a flat set of files
+
+        Returns:
+            a set of pairs (f1, f2) that are pair files, forward and backward
+
+            If a file f1 does not have a mate, f2 will be None, and the file
+            will be trimmed without a mate
+        """
+
+        pairs = set()
+
+        for f in files:
+            pair = next(f2 for f2 in files if (
+                    self._get_sequence_id(f2) == self._get_sequence_id(f) and
+                    f2 != f))
+            pairs.add(tuple(fn for fn in sorted([f, pair])))
+
+        return pairs
+
+    @staticmethod
+    def _get_sequence_id(filename):
+        """Gets the six-letter RNA sequence that identifies the RNAseq file
+
+        Returns a six character string that is the ID, or an empty string if no
+        identifying sequence is found."""
+
+        p = re.compile('.*[ACTG]{6}')
+
+        m = p.search(filename)
+        if m is None:
+            return ''
+        else:
+            return m.group()
