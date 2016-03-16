@@ -373,7 +373,7 @@ class FastQMCFTrimSolo(WorkflowStage):
     Output:
         A flat set of trimmed file names
     Args used:
-        --root: the folder where merged files will be placed
+        --root: the folder where trimmed files will be placed
         --adapters: the filepath of the fasta adapters file
         --fastq: the location of the fastq-mcf executable
         --fastq_args: a string of arguments to pass directly to fastq-mcf

@@ -127,8 +127,7 @@ class TestWorkflow(unittest.TestCase):
 
     def test_FastQMCFTrimSolo(self):
         args = Namespace(root=self.INPUTS, ext='.fastq', blocksize=1024,
-                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50',
-                         fastq=self.EXECUTABLE)
+                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50')
 
         finder = FindFiles(args)
         merger = MergeSplitFiles(args)
