@@ -25,7 +25,10 @@ from argparse import Namespace
 import fnmatch
 import logging
 
-from rnaseqflow.workflow import Workflow, FindFiles, MergeSplitFiles, FastQMCFTrimSolo
+from rnaseqflow.workflow import (
+        Workflow, FindFiles, MergeSplitFiles, FastQMCFTrimSolo,
+        FastQMCFTrimPairs
+        )
 
 logging.basicConfig(
     level=logging.INFO,
@@ -43,7 +46,8 @@ class TestWorkflow(unittest.TestCase):
 
     OUTPUTS = os.path.join(FIXTURES, 'output_samples')
     MERGE_FIXTURES = os.path.join(OUTPUTS, 'MergeSplitTest')
-    TRIM_FIXTURES = os.path.join(OUTPUTS, 'FastQMCFTrimSoloTest')
+    TRIM_SOLO_FIXTURES = os.path.join(OUTPUTS, 'FastQMCFTrimSoloTest')
+    TRIM_PAIR_FIXTURES = os.path.join(OUTPUTS, 'FastQMCFTrimPairsTest')
 
     ADAPTER_FILE = os.path.join(FIXTURES, 'test_adapters.fasta')
     EXECUTABLE = os.path.join(FIXTURES, 'pinned-fastq-mcf')
@@ -127,7 +131,8 @@ class TestWorkflow(unittest.TestCase):
 
     def test_FastQMCFTrimSolo(self):
         args = Namespace(root=self.INPUTS, ext='.fastq', blocksize=1024,
-                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50')
+                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50',
+                         quiet=True)
 
         finder = FindFiles(args)
         merger = MergeSplitFiles(args)
@@ -143,7 +148,47 @@ class TestWorkflow(unittest.TestCase):
         self.files_to_remove.update(trimmed_files)
 
         trim_fixtures = set()
-        for root, _, files in os.walk(self.TRIM_FIXTURES):
+        for root, _, files in os.walk(self.TRIM_SOLO_FIXTURES):
+            for basename in files:
+                if fnmatch.fnmatch(basename, '*.fastq'):
+                    filename = os.path.join(root, basename)
+                    trim_fixtures.add(filename)
+
+        self.assertSetEqual({os.path.basename(f) for f in trimmed_files},
+                            {os.path.basename(f) for f in trim_fixtures})
+
+        for f in trimmed_files:
+            other_f = next(
+                fn for fn in trim_fixtures if os.path.basename(fn) == os.path.basename(f))
+
+            self.assertEqual(os.path.basename(f), os.path.basename(other_f))
+
+            self.assertEqual(open(f, 'rb').read(), open(other_f, 'rb').read(),
+                             'Files named {0} do not match'.format(
+                os.path.basename(f),
+            )
+            )
+            
+    def test_FastQMCFTrimPairs(self):
+        args = Namespace(root=self.INPUTS, ext='.fastq', blocksize=1024,
+                         adapters=self.ADAPTER_FILE, fastq_args='-q 30 -l 50',
+                         quiet=True)
+
+        finder = FindFiles(args)
+        merger = MergeSplitFiles(args)
+        trimmer = FastQMCFTrimPairs(args)
+
+        found_files = finder.run(None)
+        merged_files = merger.run(found_files)
+
+        self.files_to_remove.update(merged_files)
+
+        trimmed_files = trimmer.run(merged_files)
+
+        self.files_to_remove.update(trimmed_files)
+
+        trim_fixtures = set()
+        for root, _, files in os.walk(self.TRIM_PAIR_FIXTURES):
             for basename in files:
                 if fnmatch.fnmatch(basename, '*.fastq'):
                     filename = os.path.join(root, basename)
