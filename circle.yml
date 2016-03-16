@@ -1,8 +1,8 @@
 ## Customize dependencies
 dependencies:
   pre:
-    - svn checkout http://ea-utils.googlecode.com/svn/trunk/ ~/ea-utils/
-    - pushd ~/ea-utils/clipper && BINDIR=/home/ubuntu/bin/ make install && popd
+##    - svn checkout http://ea-utils.googlecode.com/svn/trunk/ ~/ea-utils/
+##    - pushd ~/ea-utils/clipper && BINDIR=/home/ubuntu/bin/ make install && popd
     
   cache_directories:
     - "/home/ubuntu/bin"
