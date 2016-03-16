@@ -25,6 +25,7 @@ import os
 import readline
 import re
 import logging
+import glob
 
 COMMANDS = ['']
 RE_SPACE = re.compile('.*\s+$', re.M)
@@ -71,53 +72,10 @@ def all_subclasses(cls):
                                    for g in all_subclasses(s)]
 
 
-class PathCompleter(object):
-    """Class courtesy of samplebias from StackOverflow
-    For more information see http://stackoverflow.com/a/5638688/5370002
-
-    Modified to reduce functionality to path completion only
-    """
-
-    def _listdir(self, root):
-        "List directory 'root' appending the path separator to subdirs."
-        res = []
-        for name in os.listdir(root):
-            path = os.path.join(root, name)
-            if os.path.isdir(path):
-                name += os.sep
-            res.append(name)
-        return res
-
-    def _complete_path(self, path=None):
-        "Perform completion of filesystem path."
-        if not path:
-            return self._listdir('.')
-        dirname, rest = os.path.split(path)
-        tmp = dirname if dirname else '.'
-        res = [os.path.join(dirname, p)
-               for p in self._listdir(tmp) if p.startswith(rest)]
-        # more than one match, or single match which does not exist (typo)
-        if len(res) > 1 or not os.path.exists(path):
-            return res
-        # resolved to a single directory, so return list of files below it
-        if os.path.isdir(path):
-            return [os.path.join(path, p) for p in self._listdir(path)]
-        # exact file match terminates this completion
-        return [path + ' ']
-
-    def complete(self, text, state):
-        "Generic readline completion entry point."
-        buffer = readline.get_line_buffer()
-
-        if not buffer:
-            return (self._complete_path('.') + [None])[state]
-
-        return (self._complete_path(buffer) + [None])[state]
-
-
 class ArgFiller(object):
     """An interactive method of filling in arguments not given at runtime
 
+    Code completion taken from https://gist.github.com/iamatypeofwalrus/5637895
     """
 
     logger = logging.getLogger('rnaseqflow.ArgFiller')
@@ -133,11 +91,22 @@ class ArgFiller(object):
 
         self.args = args
 
-        self.comp = PathCompleter()
-        # we want to treat '/' as part of a word, so override the delimiters
-        readline.set_completer_delims('\t\n;')
-        readline.parse_and_bind("tab: complete")
-        readline.set_completer(self.comp.complete)
+    def set_path_complete(self, enable):
+        if enable:
+            readline.set_completer_delims('\t')
+            readline.parse_and_bind("tab: complete")
+            readline.set_completer(self.pathCompleter)
+        else:
+            readline.set_completer(None)
+
+    def pathCompleter(self, text, state):
+        """
+        This is the tab completer for systems paths.
+        Only tested on *nix systems
+        """
+        line = readline.get_line_buffer().split()
+
+        return [x for x in glob.glob(text + '*')][state]
 
     def fill(self, args_needed):
         """Add the needed arguments to self.args if they are not there
@@ -146,6 +115,8 @@ class ArgFiller(object):
         """
 
         for arg in args_needed:
+            self.set_path_complete(True)
+
             try:
                 fillmethod = getattr(self, '_fill_{0}'.format(arg))
             except AttributeError:
@@ -153,6 +124,8 @@ class ArgFiller(object):
                 raise
             else:
                 fillmethod()
+
+            self.set_path_complete(False)
 
     @classmethod
     def _get_integer_input(cls, message):
