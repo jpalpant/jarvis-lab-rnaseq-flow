@@ -21,7 +21,6 @@ from workflow import Workflow, WorkflowStage
 from cliutils import all_subclasses
 
 import logging
-import os
 import argparse
 
 
@@ -85,8 +84,6 @@ def main():
     """
 
     args = opts().parse_args()
-
-    print 'Adapters? {0}, {1}'.format(hasattr(args, 'adapters'), args.adapters)
 
     if args.help == 'all':
         opts().print_help()

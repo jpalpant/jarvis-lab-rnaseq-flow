@@ -45,9 +45,6 @@ class Workflow(object):
 
         self.items = []
 
-        self.buffersize = 1024 * 1024  # in bytes; aka 128kB
-        self.extension = '.fastq.gz'
-
     def append(self, item):
         """Add a WorkflowStage to the workflow
 
