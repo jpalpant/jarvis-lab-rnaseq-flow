@@ -14,3 +14,5 @@ dependencies:
 test:
   override:
     - ./run_tests.sh # use a custom bash script for testing
+  post:
+    -  mv htmlcov $CIRCLE_ARTIFACTS/coverage
