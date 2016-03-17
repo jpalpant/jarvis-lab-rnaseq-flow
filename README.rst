@@ -16,7 +16,6 @@ Copyright and License
 
 For the complete copyright and licensing information see LICENSE
 
-----------------------------------------------
 Copyright 2015 Justin Palpant
 
 This file is part of the RNAseqflow program.
