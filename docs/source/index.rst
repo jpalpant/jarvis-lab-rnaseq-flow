@@ -7,7 +7,7 @@ Welcome to rnaseqflow's documentation!
 ======================================
 
 Contents
------------
+--------
 
 .. toctree::
    :maxdepth: 2
@@ -17,7 +17,7 @@ Contents
    installation
    
 API/Reference Docs
---------------------
+------------------
 
 .. toctree::
    :maxdepth: 2

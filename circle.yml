@@ -5,3 +5,12 @@ dependencies:
     - if test "$(which fastq-mcf)" == ''; then pushd ~/ea-utils/clipper && BINDIR=/home/ubuntu/bin/ make install && popd; fi
   cache_directories:
     - "/home/ubuntu/bin"
+  post:
+  	- pip install pytest-cov
+  	- pip install pytest
+  	- pip install mock
+  	- pip insall py
+  	
+test:
+  override:
+    - ./run_tests.sh # use a custom bash script for testing

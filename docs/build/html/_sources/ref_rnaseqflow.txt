@@ -2,55 +2,33 @@
 Python Documentation
 ====================
 
-rnaseqflow is composed of three modules - **__main__**, **workflow**, and **cliutils**
+rnaseqflow is composed of three modules:
 
-* **__main__** provides the console entry point for the program for the user. 
-* **workflow** provides several classes that are used to execute a series of preprocessing steps on RNAseq data
-* **cliutils** provides a class that can intelligently ask the user to provide arguments if the required arguments were not provided at the command line
+:ref:`__main__ <rnaseqflow.__main__>`
+=====================================
+Provides the entry point for the executable in the function **main()** and argument parsing in **opts()**
 
-``rnaseqflow.__main__``
-=======================
-.. autofunction:: rnaseqflow.__main__.main
-.. autofunction:: rnaseqflow.__main__.opts
+.. toctree::
+   :maxdepth: 2
+   
+   modules/module_main
 
-``rnaseqflow.workflow``
-=======================
-.. autoclass:: rnaseqflow.workflow.Workflow
-    :members:
-    :private-members:
-    
-.. autoclass:: rnaseqflow.workflow.WorkflowStage
-    :members:
-    :private-members:
+:ref:`workflow <rnaseqflow.workflow>`
+=====================================
+Provides several classes that are used to execute a series of preprocessing steps on RNAseq data
 
-.. autoclass:: rnaseqflow.workflow.FindFiles
-    :members:
-    :private-members:
-    :show-inheritance:
-    
-.. autoclass:: rnaseqflow.workflow.MergeSplitFiles
-    :members:
-    :private-members:
-    :show-inheritance:
+.. toctree::
+   :maxdepth: 2
+   
+   modules/module_workflow
 
-.. autoclass:: rnaseqflow.workflow.FastQMCFTrimSolo
-    :members:
-    :private-members:
-    :show-inheritance:
-    
-.. autoclass:: rnaseqflow.workflow.FastQMCFTrimPairs
-    :members:
-    :private-members:
-    :show-inheritance: 
-      
-``rnaseqflow.cliutils``
-=======================
-.. autoclass:: rnaseqflow.cliutils.ArgFiller
-    :members:
-    :private-members:
-    
-.. autofunction:: rnaseqflow.cliutils.all_subclasses
-.. autofunction:: rnaseqflow.cliutils.trim
-.. autofunction:: rnaseqflow.cliutils.firstline
+:ref:`cliutils <rnaseqflow.cliutils>`
+=====================================
+Provides a class that can intelligently ask the user to provide arguments if the required arguments were not provided at the command line
+
+.. toctree::
+   :maxdepth: 2
+   
+   modules/module_cliutils
 
     
