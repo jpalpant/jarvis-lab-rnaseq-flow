@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Documentation &mdash; rnaseqflow 0.2.0 documentation</title>
+  <title>class Workflow &mdash; rnaseqflow 0.2.0 documentation</title>
   
 
   
@@ -24,17 +24,19 @@
 
   
   
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   
 
   
 
   
-    <link rel="top" title="rnaseqflow 0.2.0 documentation" href="index.html"/>
-        <link rel="prev" title="Installing" href="installation.html"/> 
+    <link rel="top" title="rnaseqflow 0.2.0 documentation" href="../index.html"/>
+        <link rel="up" title="Modules" href="../ref_pythonapi.html"/>
+        <link rel="next" title="class ArgFiller" href="module_cliutils.html"/>
+        <link rel="prev" title="function main()" href="module_main.html"/> 
 
   
-  <script src="_static/js/modernizr.min.js"></script>
+  <script src="../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> rnaseqflow
+            <a href="../index.html" class="icon icon-home"> rnaseqflow
           
 
           
@@ -66,7 +68,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -80,18 +82,21 @@
           
             
             
-                <ul>
-<li class="toctree-l1"><a class="reference internal" href="README.html">What Is It?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="README.html#changelog">Changelog</a></li>
-<li class="toctree-l1"><a class="reference internal" href="README.html#copyright-and-license">Copyright and License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="usage.html">Introduction and How-To</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installing</a></li>
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref_cli.html">Command Line Interface</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../ref_pythonapi.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../ref_pythonapi.html#main"><code class="docutils literal"><span class="pre">__main__</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../ref_pythonapi.html#workflow"><code class="docutils literal"><span class="pre">workflow</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">class</span> <span class="pre">Workflow</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-workflowstage"><code class="docutils literal"><span class="pre">class</span> <span class="pre">WorkflowStage</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-findfiles"><code class="docutils literal"><span class="pre">class</span> <span class="pre">FindFiles</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-mergesplitfiles"><code class="docutils literal"><span class="pre">class</span> <span class="pre">MergeSplitFiles</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-fastqmcftrimsolo"><code class="docutils literal"><span class="pre">class</span> <span class="pre">FastQMCFTrimSolo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#class-fastqmcftrimpairs"><code class="docutils literal"><span class="pre">class</span> <span class="pre">FastQMCFTrimPairs</span></code></a></li>
 </ul>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="">Python Documentation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#rnaseqflow-main"><code class="docutils literal"><span class="pre">rnaseqflow.__main__</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rnaseqflow-workflow"><code class="docutils literal"><span class="pre">rnaseqflow.workflow</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rnaseqflow-cliutils"><code class="docutils literal"><span class="pre">rnaseqflow.cliutils</span></code></a></li>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ref_pythonapi.html#cliutils"><code class="docutils literal"><span class="pre">cliutils</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -107,7 +112,7 @@
       
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="index.html">rnaseqflow</a>
+        <a href="../index.html">rnaseqflow</a>
       </nav>
 
 
@@ -122,13 +127,15 @@
 
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
-    <li><a href="index.html">Docs</a> &raquo;</li>
+    <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Python Documentation</li>
+          <li><a href="../ref_pythonapi.html">Modules</a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">class</span> <span class="pre">Workflow</span></code></li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/ref_rnaseqflow.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/module_workflow.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -138,35 +145,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="python-documentation">
-<h1>Python Documentation<a class="headerlink" href="#python-documentation" title="Permalink to this headline">¶</a></h1>
-<p>rnaseqflow is composed of three modules - <strong>__main__</strong>, <strong>workflow</strong>, and <strong>cliutils</strong></p>
-<ul class="simple">
-<li><strong>__main__</strong> provides the console entry point for the program for the user.</li>
-<li><strong>workflow</strong> provides several classes that are used to execute a series of preprocessing steps on RNAseq data</li>
-<li><strong>cliutils</strong> provides a class that can intelligently ask the user to provide arguments if the required arguments were not provided at the command line</li>
-</ul>
-<div class="section" id="rnaseqflow-main">
-<h2><code class="docutils literal"><span class="pre">rnaseqflow.__main__</span></code><a class="headerlink" href="#rnaseqflow-main" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="rnaseqflow.__main__.main">
-<code class="descclassname">rnaseqflow.__main__.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.__main__.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>This method is installed as a console script entry point by setuptools</p>
-<p>It uses the command line arguments specified by opts() to generate a
-Workflow object and adds to it several WorkflowStages.</p>
-<p>If the needed command line arguments are not passed, the user is asked to
-enter them.</p>
-<p>The generated Workflow object is then executed with run()</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="rnaseqflow.__main__.opts">
-<code class="descclassname">rnaseqflow.__main__.</code><code class="descname">opts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.__main__.opts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-<div class="section" id="rnaseqflow-workflow">
-<h2><code class="docutils literal"><span class="pre">rnaseqflow.workflow</span></code><a class="headerlink" href="#rnaseqflow-workflow" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="class-workflow">
+<span id="rnaseqflow-workflow"></span><h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">Workflow</span></code><a class="headerlink" href="#class-workflow" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.Workflow">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">Workflow</code><a class="headerlink" href="#rnaseqflow.workflow.Workflow" title="Permalink to this definition">¶</a></dt>
@@ -220,6 +200,9 @@ functions are written as support for this function, at the moment</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="class-workflowstage">
+<h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">WorkflowStage</span></code><a class="headerlink" href="#class-workflowstage" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.WorkflowStage">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">WorkflowStage</code><a class="headerlink" href="#rnaseqflow.workflow.WorkflowStage" title="Permalink to this definition">¶</a></dt>
@@ -277,6 +260,9 @@ the input as necessary, and define what input it takes</td>
 
 </dd></dl>
 
+</div>
+<div class="section" id="class-findfiles">
+<h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">FindFiles</span></code><a class="headerlink" href="#class-findfiles" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.FindFiles">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">FindFiles</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.workflow.FindFiles" title="Permalink to this definition">¶</a></dt>
@@ -326,6 +312,9 @@ the input as necessary, and define what input it takes</td>
 
 </dd></dl>
 
+</div>
+<div class="section" id="class-mergesplitfiles">
+<h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">MergeSplitFiles</span></code><a class="headerlink" href="#class-mergesplitfiles" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.MergeSplitFiles">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">MergeSplitFiles</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.workflow.MergeSplitFiles" title="Permalink to this definition">¶</a></dt>
@@ -467,6 +456,9 @@ formatted 001</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="class-fastqmcftrimsolo">
+<h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">FastQMCFTrimSolo</span></code><a class="headerlink" href="#class-fastqmcftrimsolo" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.FastQMCFTrimSolo">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">FastQMCFTrimSolo</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.workflow.FastQMCFTrimSolo" title="Permalink to this definition">¶</a></dt>
@@ -519,6 +511,9 @@ formatted 001</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="class-fastqmcftrimpairs">
+<h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">FastQMCFTrimPairs</span></code><a class="headerlink" href="#class-fastqmcftrimpairs" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="rnaseqflow.workflow.FastQMCFTrimPairs">
 <em class="property">class </em><code class="descclassname">rnaseqflow.workflow.</code><code class="descname">FastQMCFTrimPairs</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.workflow.FastQMCFTrimPairs" title="Permalink to this definition">¶</a></dt>
@@ -612,192 +607,6 @@ identifying sequence is found.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="rnaseqflow-cliutils">
-<h2><code class="docutils literal"><span class="pre">rnaseqflow.cliutils</span></code><a class="headerlink" href="#rnaseqflow-cliutils" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="rnaseqflow.cliutils.ArgFiller">
-<em class="property">class </em><code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">ArgFiller</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller" title="Permalink to this definition">¶</a></dt>
-<dd><p>An interactive method of filling in arguments not given at runtime</p>
-<p>Code completion taken from <a class="reference external" href="https://gist.github.com/iamatypeofwalrus/5637895">https://gist.github.com/iamatypeofwalrus/5637895</a></p>
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_adapters">
-<code class="descname">_fill_adapters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_adapters" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in self.args.adapters with a valid file path</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_blocksize">
-<code class="descname">_fill_blocksize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_blocksize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in self.args.blocksize with a valid integer (in kB)</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_ext">
-<code class="descname">_fill_ext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_ext" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in self.args.ext with a file type extension</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_fastq">
-<code class="descname">_fill_fastq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_fastq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in the fastq-mcf executable self.args.fastq with a default &#8216;fastq-mcf&#8217;</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_fastq_args">
-<code class="descname">_fill_fastq_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_fastq_args" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in self.args.fastq_args</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_quiet">
-<code class="descname">_fill_quiet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_quiet" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in the quiet argument self.args.quiet with default False</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller._fill_root">
-<code class="descname">_fill_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_root" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fill in self.args.root with a valid root directory</p>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="rnaseqflow.cliutils.ArgFiller._get_directory_input">
-<em class="property">classmethod </em><code class="descname">_get_directory_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_directory_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ask the user to enter a directory path in the command line</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="rnaseqflow.cliutils.ArgFiller._get_filepath_input">
-<em class="property">classmethod </em><code class="descname">_get_filepath_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_filepath_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ask the user to enter a file path in the command line</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="classmethod">
-<dt id="rnaseqflow.cliutils.ArgFiller._get_integer_input">
-<em class="property">classmethod </em><code class="descname">_get_integer_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_integer_input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ask the user to enter an integer in the command line</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller.fill">
-<code class="descname">fill</code><span class="sig-paren">(</span><em>args_needed</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.fill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add the needed arguments to self.args if they are not there</p>
-<p>Asks the user for input for each of the missing arguments</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args_needed</strong> (<em>list(str)</em>) &#8211; a list of attributes to ensure self.args contains</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller.pathCompleter">
-<code class="descname">pathCompleter</code><span class="sig-paren">(</span><em>text</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.pathCompleter" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is the tab completer for systems paths.
-Only tested on <a href="#id1"><span class="problematic" id="id2">*</span></a>nix systems</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="rnaseqflow.cliutils.ArgFiller.set_path_complete">
-<code class="descname">set_path_complete</code><span class="sig-paren">(</span><em>enable</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.set_path_complete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Enable or disable readline pathcompletion</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enable</strong> (<em>bool</em>) &#8211; enable or disable completion</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="rnaseqflow.cliutils.all_subclasses">
-<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">all_subclasses</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.all_subclasses" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively generate all subclasses of cls</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> &#8211; a python class</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">all subclasses of cls</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(cls)</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="rnaseqflow.cliutils.trim">
-<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">trim</code><span class="sig-paren">(</span><em>docstring</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.trim" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trim a <span class="target" id="index-0"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257"><strong>PEP 0257</strong></a> docstring</p>
-<p>Code taken directly from <span class="target" id="index-1"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257#handling-docstring-indentation"><strong>PEP 0257#handling-docstring-indentation</strong></a></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>docstring</strong> (<em>str</em>) &#8211; a Python docstring</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the first line of the docstring</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="rnaseqflow.cliutils.firstline">
-<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">firstline</code><span class="sig-paren">(</span><em>docstring</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.firstline" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract and return only the first line of a <span class="target" id="index-2"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257"><strong>PEP 0257</strong></a> docstring</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>docstring</strong> (<em>str</em>) &#8211; a Python docstring</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the first line of the docstring</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-</div>
 
 
            </div>
@@ -806,8 +615,10 @@ Only tested on <a href="#id1"><span class="problematic" id="id2">*</span></a>nix
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="module_cliutils.html" class="btn btn-neutral float-right" title="class ArgFiller" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="installation.html" class="btn btn-neutral" title="Installing" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="module_main.html" class="btn btn-neutral" title="function main()" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -837,22 +648,22 @@ Only tested on <a href="#id1"><span class="problematic" id="id2">*</span></a>nix
 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
+            URL_ROOT:'../',
             VERSION:'0.2.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true
         };
     </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
 
   
 
   
   
-    <script type="text/javascript" src="_static/js/theme.js"></script>
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
   
 
   

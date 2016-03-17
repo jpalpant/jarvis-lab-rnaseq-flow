@@ -1,32 +1,21 @@
 What Is It?
--------------
+-----------
 
-A Python library to make preprocessing of RNAseq files more convenient
+An open-source Python library to make preprocessing of RNAseq files more convenient
 
-CircleCI Status of master branch:
-![RNAseqflow Build Status](https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow.png?style=shield&circle-token=:circle-token "RNAseqflow Build Status")
+Circle CI Status of master branch: |circlecibuild|
 
-Changelog
--------------
-**Version 0.2.0**
-- Complete overhaul of program structure
-- Modular Workflow creation
-- Addition of command line arguments
-- Removal of PyQT dependency
-- Addition of unit testing
+.. |circlecibuild| image:: https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow.png?style=shield
 
-**Version 0.1.1**
-- Added timestamps to logging and additional parameters to fastq-mcf
+See the lastest build status on `CircleCI <https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow/tree/master>`_
 
-**Version 0.1.0**
-- Initial alpha release
+Complete documentation available on `Read the Docs <https://rnaseqflow.readthedocs.org>`_
 
 Copyright and License
 ---------------------
 
 For the complete copyright and licensing information see LICENSE
 
-----------------------------------------------
 Copyright 2015 Justin Palpant
 
 This file is part of the RNAseqflow program.

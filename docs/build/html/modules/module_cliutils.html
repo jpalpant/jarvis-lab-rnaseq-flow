@@ -1,0 +1,405 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>class ArgFiller &mdash; rnaseqflow 0.2.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rnaseqflow 0.2.0 documentation" href="../index.html"/>
+        <link rel="up" title="Modules" href="../ref_pythonapi.html"/>
+        <link rel="prev" title="class Workflow" href="module_workflow.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> rnaseqflow
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ref_cli.html">Command Line Interface</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../ref_pythonapi.html">Modules</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../ref_pythonapi.html#main"><code class="docutils literal"><span class="pre">__main__</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ref_pythonapi.html#workflow"><code class="docutils literal"><span class="pre">workflow</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../ref_pythonapi.html#cliutils"><code class="docutils literal"><span class="pre">cliutils</span></code></a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">class</span> <span class="pre">ArgFiller</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-all-subclasses"><code class="docutils literal"><span class="pre">function</span> <span class="pre">all_subclasses</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-trim"><code class="docutils literal"><span class="pre">function</span> <span class="pre">trim</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#function-firstline"><code class="docutils literal"><span class="pre">function</span> <span class="pre">firstline</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rnaseqflow</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../ref_pythonapi.html">Modules</a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">class</span> <span class="pre">ArgFiller</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/modules/module_cliutils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="class-argfiller">
+<span id="rnaseqflow-cliutils"></span><h1><code class="docutils literal"><span class="pre">class</span> <span class="pre">ArgFiller</span></code><a class="headerlink" href="#class-argfiller" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="rnaseqflow.cliutils.ArgFiller">
+<em class="property">class </em><code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">ArgFiller</code><span class="sig-paren">(</span><em>args</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller" title="Permalink to this definition">¶</a></dt>
+<dd><p>An interactive method of filling in arguments not given at runtime</p>
+<p>Code completion taken from <a class="reference external" href="https://gist.github.com/iamatypeofwalrus/5637895">https://gist.github.com/iamatypeofwalrus/5637895</a></p>
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_adapters">
+<code class="descname">_fill_adapters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_adapters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in self.args.adapters with a valid file path</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_blocksize">
+<code class="descname">_fill_blocksize</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_blocksize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in self.args.blocksize with a valid integer (in kB)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_ext">
+<code class="descname">_fill_ext</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in self.args.ext with a file type extension</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_fastq">
+<code class="descname">_fill_fastq</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_fastq" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in the fastq-mcf executable self.args.fastq with a default &#8216;fastq-mcf&#8217;</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_fastq_args">
+<code class="descname">_fill_fastq_args</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_fastq_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in self.args.fastq_args</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_quiet">
+<code class="descname">_fill_quiet</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_quiet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in the quiet argument self.args.quiet with default False</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller._fill_root">
+<code class="descname">_fill_root</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._fill_root" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill in self.args.root with a valid root directory</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rnaseqflow.cliutils.ArgFiller._get_directory_input">
+<em class="property">classmethod </em><code class="descname">_get_directory_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_directory_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user to enter a directory path in the command line</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rnaseqflow.cliutils.ArgFiller._get_filepath_input">
+<em class="property">classmethod </em><code class="descname">_get_filepath_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_filepath_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user to enter a file path in the command line</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="rnaseqflow.cliutils.ArgFiller._get_integer_input">
+<em class="property">classmethod </em><code class="descname">_get_integer_input</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller._get_integer_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ask the user to enter an integer in the command line</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>message</strong> (<em>str</em>) &#8211; a message to display with raw_input</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller.fill">
+<code class="descname">fill</code><span class="sig-paren">(</span><em>args_needed</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the needed arguments to self.args if they are not there</p>
+<p>Asks the user for input for each of the missing arguments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>args_needed</strong> (<em>list(str)</em>) &#8211; a list of attributes to ensure self.args contains</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller.pathCompleter">
+<code class="descname">pathCompleter</code><span class="sig-paren">(</span><em>text</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.pathCompleter" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is the tab completer for systems paths.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rnaseqflow.cliutils.ArgFiller.set_path_complete">
+<code class="descname">set_path_complete</code><span class="sig-paren">(</span><em>enable</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.ArgFiller.set_path_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable or disable readline pathcompletion</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>enable</strong> (<em>bool</em>) &#8211; enable or disable completion</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="function-all-subclasses">
+<h1><code class="docutils literal"><span class="pre">function</span> <span class="pre">all_subclasses</span></code><a class="headerlink" href="#function-all-subclasses" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="rnaseqflow.cliutils.all_subclasses">
+<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">all_subclasses</code><span class="sig-paren">(</span><em>cls</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.all_subclasses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively generate all subclasses of cls</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cls</strong> &#8211; a python class</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">all subclasses of cls</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">list(cls)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-trim">
+<h1><code class="docutils literal"><span class="pre">function</span> <span class="pre">trim</span></code><a class="headerlink" href="#function-trim" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="rnaseqflow.cliutils.trim">
+<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">trim</code><span class="sig-paren">(</span><em>docstring</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.trim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim a <span class="target" id="index-0"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257"><strong>PEP 0257</strong></a> docstring</p>
+<p>Code taken directly from <span class="target" id="index-1"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257#handling-docstring-indentation"><strong>PEP 0257#handling-docstring-indentation</strong></a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>docstring</strong> (<em>str</em>) &#8211; a Python docstring</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the first line of the docstring</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="function-firstline">
+<h1><code class="docutils literal"><span class="pre">function</span> <span class="pre">firstline</span></code><a class="headerlink" href="#function-firstline" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="rnaseqflow.cliutils.firstline">
+<code class="descclassname">rnaseqflow.cliutils.</code><code class="descname">firstline</code><span class="sig-paren">(</span><em>docstring</em><span class="sig-paren">)</span><a class="headerlink" href="#rnaseqflow.cliutils.firstline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract and return only the first line of a <span class="target" id="index-2"></span><a class="pep reference external" href="https://www.python.org/dev/peps/pep-0257"><strong>PEP 0257</strong></a> docstring</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>docstring</strong> (<em>str</em>) &#8211; a Python docstring</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the first line of the docstring</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">str</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="module_workflow.html" class="btn btn-neutral" title="class Workflow" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, Justin Palpant.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.2.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

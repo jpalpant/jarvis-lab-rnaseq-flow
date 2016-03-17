@@ -8,10 +8,14 @@ import mock
 import os
 from argparse import Namespace
 
-from rnaseqflow.cliutils import ArgFiller
+from rnaseqflow.cliutils import ArgFiller, trim, firstline, all_subclasses
 
 
-class Test(unittest.TestCase):
+class ArgFillerTest(unittest.TestCase):
+    """Tests for functions and classes in rnaseqflow.cliutils
+
+    Long docstring for testing
+    """
 
     FIXTURES = os.path.join(os.path.dirname(__file__),
                             'fixtures')
@@ -80,6 +84,47 @@ class Test(unittest.TestCase):
             self.af.fill(['fastq_args'])
 
         self.assertEqual(self.empty_args.fastq_args, '-q 30')
+
+    def test_fill_quiet(self):
+        self.af.fill(['quiet'])
+
+        self.assertFalse(self.empty_args.quiet)
+
+        self.empty_args.quiet = True
+        self.af.fill(['quiet'])
+
+        self.assertTrue(self.empty_args.quiet)
+
+    def test_trim(self):
+        correct_docstring = "Tests for functions and classes in " \
+            "rnaseqflow.cliutils\n\n" \
+            "Long docstring for testing"
+
+        self.assertEqual(trim(self.__doc__), correct_docstring)
+        self.assertEqual(trim(None), '')
+
+    def test_firstline(self):
+        correct_firstline = "Tests for functions and classes in rnaseqflow.cliutils"
+
+        self.assertEqual(firstline(self.__doc__), correct_firstline)
+        self.assertEqual(firstline(None), '')
+
+    def test_all_subclasses(self):
+
+        class Base(object):
+            pass
+
+        self.assertListEqual(all_subclasses(Base), [])
+
+        class Inherited1(Base):
+            pass
+
+        self.assertListEqual(all_subclasses(Base), [Inherited1])
+
+        class Inherited2(Base):
+            pass
+
+        self.assertListEqual(all_subclasses(Base), [Inherited1, Inherited2])
 
 
 if __name__ == "__main__":

@@ -127,10 +127,7 @@ class ArgFiller(object):
             readline.set_completer(None)
 
     def pathCompleter(self, text, state):
-        """
-        This is the tab completer for systems paths.
-        Only tested on *nix systems
-        """
+        """This is the tab completer for systems paths."""
         line = readline.get_line_buffer().split()
 
         return [x for x in glob.glob(text + '*')][state]
