@@ -6,10 +6,10 @@ dependencies:
   cache_directories:
     - "/home/ubuntu/bin"
   post:
-  	- pip install pytest-cov
-  	- pip install pytest
-  	- pip install mock
-  	- pip insall py
+    - pip install pytest-cov
+    - pip install pytest
+    - pip install mock
+    - pip insall py
   	
 test:
   override:
