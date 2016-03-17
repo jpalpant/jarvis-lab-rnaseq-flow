@@ -1,7 +1,10 @@
-Introduction and How-To
------------------------
+.. _ref_cli:
 
-While rnaseqflow is a Python package, most users will have need only of the command line entry point installed by setuptools::
+Command Line Interface
+======================
+
+While rnaseqflow is a Python package, most users will have need only of the
+command line entry point installed by setuptools::
 	
 	$ rnaseqflow [--help [{all,stages}]]
 	             [--logging {debug,info,warning,error,critical}] [--version]
@@ -12,7 +15,3 @@ While rnaseqflow is a Python package, most users will have need only of the comm
 General help is available with the "--help" argument::
 
 	$ rnaseqflow --help
-	
-For more detailed information on the specific processing stages available, call::
-
-	$ rnaseqflow --help stages

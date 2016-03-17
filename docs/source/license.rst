@@ -1,31 +1,11 @@
-What Is It?
------------
-
-A Python library to make preprocessing of RNAseq files more convenient
-
-Changelog
----------
-**Version 0.2.0**
-- Complete overhaul of program structure
-- Modular Workflow creation
-- Addition of command line arguments
-- Removal of PyQT dependency
-- Addition of unit testing
-
-**Version 0.1.1**
-- Added timestamps to logging and additional parameters to fastq-mcf
-
-**Version 0.1.0**
-- Initial alpha release
+.. _ref_license:
 
 Copyright and License
----------------------
+=====================
 
-For the complete copyright and licensing information see LICENSE
+For the complete copyright and licensing information see `LICENSE <_static/license>`_
 
 Copyright 2015 Justin Palpant
-
-This file is part of the RNAseqflow program.
 
 RNAseqflow is free software: you can redistribute it and/or modify it under the
 terms of the GNU General Public License as published by the Free Software

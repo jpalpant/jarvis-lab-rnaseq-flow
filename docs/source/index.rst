@@ -6,27 +6,15 @@
 Welcome to rnaseqflow's documentation!
 ======================================
 
-Contents
---------
-
 .. toctree::
    :maxdepth: 2
    
-   readme <README>
-   usage
-   installation
-   
-API/Reference Docs
-------------------
-
-.. toctree::
-   :maxdepth: 2
-   
-   ref_rnaseqflow
+   overview
+   ref_cli
+   ref_pythonapi
 
 Indices and tables
-==================
-
+------------------
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
