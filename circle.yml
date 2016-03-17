@@ -10,7 +10,7 @@ dependencies:
     - pip install pytest
     - pip install mock
     - pip insall py
-  	
+
 test:
   override:
     - ./run_tests.sh # use a custom bash script for testing
