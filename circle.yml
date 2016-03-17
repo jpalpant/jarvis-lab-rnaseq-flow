@@ -9,7 +9,7 @@ dependencies:
     - pip install pytest-cov
     - pip install pytest
     - pip install mock
-    - pip insall py
+    - pip install py
 
 test:
   override:
