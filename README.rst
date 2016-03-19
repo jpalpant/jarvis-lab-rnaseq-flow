@@ -5,9 +5,9 @@ An open-source Python library to make preprocessing of RNAseq files more conveni
 
 Circle CI Status of master branch: |circlecibuild|
 
-.. |circlecibuild| image:: https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow.png?style=shield
+.. |circlecibuild| image:: https://circleci.com/gh/jpalpant/rnaseqflow.png?style=shield
 
-See the lastest build status on `CircleCI <https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow/tree/master>`_
+See the lastest build status on `CircleCI <https://circleci.com/gh/jpalpant/rnaseqflow/tree/master>`_
 
 Complete documentation available on `Read the Docs <https://rnaseqflow.readthedocs.org>`_
 

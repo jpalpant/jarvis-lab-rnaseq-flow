@@ -6,7 +6,7 @@ Installation
 You can checkout the latest development version from Github repository with the
 following command::
 
-	git clone https://github.com/jpalpant/jarvis-lab-rnaseq-flow
+	git clone https://github.com/jpalpant/rnaseqflow
 You can install rnaseqflow with pip::
 
 	pip install -U rnaseqflow

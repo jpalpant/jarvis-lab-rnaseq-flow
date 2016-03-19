@@ -25,8 +25,8 @@ request support for a specific operation, request a feature, or report a bug, pl
 at the GitHub repository below.  
 
 GitHub repository:
-`jarvis-lab-rnaseq-flow <https://github.com/jpalpant/jarvis-lab-rnaseq-flow>`_
+`jarvis-lab-rnaseq-flow <https://github.com/jpalpant/rnaseqflow>`_
 
 Circle CI Status of master branch: |circlecibuild|
 
-.. |circlecibuild| image:: https://circleci.com/gh/jpalpant/jarvis-lab-rnaseq-flow.png?style=shield
+.. |circlecibuild| image:: https://circleci.com/gh/jpalpant/rnaseqflow.png?style=shield
