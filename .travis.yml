@@ -11,7 +11,7 @@ before_script:
   - echo $PATH > $HOME/htmlcov/test_artifact.txt
   - if [ -e "$HOME/bin" ]; then PATH=$PATH:$HOME/bin; else mkdir $HOME/bin; fi
   - if test "$(which fastq-mcf)" == ''; then svn checkout http://ea-utils.googlecode.com/svn/trunk/ $HOME/ea-utils/; fi
-  - if test "$(which fastq-mcf)" == ''; then pushd $HOME/ea-utils/clipper && BINDIR=$HOME/bin/ make install && popd; fi
+  - if test "$(which fastq-mcf)" == ''; then pushd $HOME/ea-utils/clipper && BINDIR=$HOME/bin/ make install fastq-mcf && popd; fi
 
 script: ./run_tests.sh
   
@@ -22,7 +22,8 @@ addons:
     - $HOME/htmlcov
   apt:
     packages:
-    - libgsl0ldbl
+    - zlib1g-dev
+    - libgsl0-dev
     
 cache:
   directories:
