@@ -27,6 +27,12 @@ at the GitHub repository below.
 GitHub repository:
 `jarvis-lab-rnaseq-flow <https://github.com/jpalpant/rnaseqflow>`_
 
-Circle CI Status of master branch: |circlecibuild|
+CircleCI build status: |circlecibuild|_
 
 .. |circlecibuild| image:: https://circleci.com/gh/jpalpant/rnaseqflow.png?style=shield
+.. _circlecibuild: https://circleci.com/gh/jpalpant/rnaseqflow/tree/master
+
+TravisCI build status: |traviscibuild|_
+
+.. |traviscibuild| image:: https://travis-ci.org/jpalpant/rnaseqflow.svg?branch=master
+.. _traviscibuild: https://travis-ci.org/jpalpant/rnaseqflow
