@@ -7,8 +7,8 @@ python: "2.7"
 
 before_script:
   - pip install pytest-cov
-  - mkdir $HOME/htmlcov
-  - echo $PATH > $HOME/htmlcov/test_artifact.txt
+  - mkdir $HOME/coverage
+  - echo $PATH > $HOME/coverage/test_artifact.txt
   - if [ -e "$HOME/bin" ]; then PATH=$PATH:$HOME/bin; else mkdir $HOME/bin; fi
   - if test "$(which fastq-mcf)" == ''; then svn checkout http://ea-utils.googlecode.com/svn/trunk/ $HOME/ea-utils/; fi
   - if test "$(which fastq-mcf)" == ''; then pushd $HOME/ea-utils/clipper && BINDIR=$HOME/bin/ make install fastq-mcf && popd; fi
@@ -19,7 +19,7 @@ addons:
   artifacts:
     # ...
     paths:
-    - $HOME/htmlcov
+    - $HOME/coverage
   apt:
     packages:
     - zlib1g-dev
