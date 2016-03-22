@@ -41,12 +41,68 @@ Which displays the following output::
                            Specify arguments to be passed to fastq-mcf
      --quiet               Silence extraneous console output
      
-Common Use Case
+Sample Use Case
 ---------------
+After an experiment, data may be delivered in the following folder structure: ::
 
+   /drive
+      /experimentdata
+         adapters.fasta
+         /Sample_NIK1
+            NIK1-2_TGACCA_L001_R1_001.fastq
+            NIK1-2_TGACCA_L001_R1_002.fastq
+            NIK1-2_TGACCA_L001_R2_001.fastq   
+            NIK1-2_TGACCA_L001_R2_002.fastq   
+         /Sample_NIK2
+            NIK2-1_TGACCA_L001_R1_001.fastq
+            NIK2-1_TGACCA_L001_R1_002.fastq
+            NIK2-1_TGACCA_L001_R2_001.fastq   
+            NIK2-1_TGACCA_L001_R2_002.fastq   
+         ...
+  
+Where each _001, _002, etc. represent the nth part of a large fastq.
 
+The standard workflow would be to rejoin these files by concatenating the relevant parts together,
+and then calling a program to trim adapter sequences from the trimmed files.  It may also be
+desired that the files be trimmed based on read quality and read length.
 
-     
+Using rnaseqflow, the program would be executed with the following command: ::
+
+   $ rnaseqflow
+   Stages not given with --stages argument
+   The following WorkflowStages are available:
+   1: FindFiles - Find files recursively in a folder
+   2: MergeSplitFiles - Merge files by the identifying sequence and direction
+   3.0: FastQMCFTrimSolo - Trim adapter sequences from files using fastq-mcf one file at a time
+   3.1: FastQMCFTrimPairs - Trim adapter sequences from files using fastq-mcf in paired-end mode
+   Use "--help stages" for more details
+   
+   Enter space separated stage specifiers (e.g. "1 2 3"): 1 2 3.1
+   No root directory provided with --root
+   Please enter a directory to use as the root folder: /drive/experimentdata
+   No file extension provided with --ext
+   Please provide a file extension (e.g. .fastq, .fastq.gz): .fastq
+   No blocksize for file copy operations given with --blocksize
+   Please provide a blocksize in kB (e.g. 1024): 1024
+   fasta adapter file not yet specified with --adapters
+   Please specify the .fasta adapter file location: /drive/experimentdata/adapters.fasta
+   No fastq arguments provided to --fastq_args
+   Provide an optional argument string for fastq here (e.g. "-q 30 -x 0.5"): "-q 30 -l 50 -x 0.5"
+   
+The program execution would begin by searching for fastq files within the root folder.
+With those files found it would create a folder /drive/experimentdata/merged into which it
+would put the concatenated files.  It would take those concatenated files and pass them in
+forward-reverse pairs to fastq-mcf, putting the output in another folder /drive/experimentdata/trimmed.
+   
+Executing this command would require that fastq-mcf be installed and available on the system path.
+
+It would also be possible to run this command without any interaction by using many
+command line arguments ::
+
+   $ rnaseqflow --stages 1 2 3.1 --root /drive/experimentdata 
+     --adapters /drive/experimentdata/adapters.fasta --ext .fastq --blocksize 1024
+     --fastq_args "-q 30 -l 50 -x 0.5"
+
 Arguments
 ---------
 
@@ -89,7 +145,7 @@ Arguments
    $rnaseqflow --ext .fastq
 
 :--blocksize: Should be followed by an integer number of kilobytes; specifies 
-   the blocksize for use in file operations, such as file concatenation.  Default value 1024 (kB). ::
+   the blocksize for use in file operations, such as file concatenation.  No default. ::
    
    $rnaseqflow --blocksize 1024
 
@@ -110,7 +166,7 @@ Arguments
    $rnaseqflow --quiet
    
 If an argument is needed by any part of the workflow specified with the 
-**--stages* argument and it is not provided, or if it has been provided 
+**--stages** argument and it is not provided, or if it has been provided 
 incorrectly, the user will be asked to provide that argument before the program
 begins.
   
@@ -199,4 +255,4 @@ by these stages, such as a file extension, a root directory, an adapter file, et
 
 .. note:: Make sure to use the specifiers given by your console's output from **--help stages**, not the specifiers here.  The specifiers in your installation may be different than in those used here.  The **--help stages** argument attempts to intelligently find all possible available stages.
 
-The stage name will be visible in logging statements from that stages.
+The stage name will be visible in logging statements from that stage.
