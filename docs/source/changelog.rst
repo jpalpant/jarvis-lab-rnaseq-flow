@@ -3,6 +3,11 @@
 Changelog
 =========
 
+**Version 0.2.1**
+ - Continuous integration!
+ - This documentation!
+ - Creation of a paired-end fastq-mcf WorkflowStage
+
 **Version 0.2.0**
  - Complete overhaul of program structure
  - Modular Workflow creation
