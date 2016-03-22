@@ -9,9 +9,8 @@ before_script:
   - mkdir $HOME/htmlcov
   - echo $PATH > $HOME/htmlcov/test_artifact.txt
   - if [ -e "$HOME/bin" ]; then PATH=$PATH:$HOME/bin; else mkdir $HOME/bin; fi
-  - if test "$(which fastq-mcf)" == ''; then svn checkout http://ea-utils.googlecode.com/svn/trunk/ $HOME/ea-utils/; fi
+  - if test "$(which fastq-mcf)" == ''; then apt-get install libgsl0ldbl && svn checkout http://ea-utils.googlecode.com/svn/trunk/ $HOME/ea-utils/; fi
   - if test "$(which fastq-mcf)" == ''; then pushd $HOME/ea-utils/clipper && BINDIR=$HOME/bin/ make install && popd; fi
-  
 
 script: ./run_tests.sh
   
