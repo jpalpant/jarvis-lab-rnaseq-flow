@@ -3,11 +3,15 @@ What Is It?
 
 An open-source Python library to make preprocessing of RNAseq files more convenient
 
-Circle CI Status of master branch: |circlecibuild|
+CircleCI build status: |circlecibuild|_
 
 .. |circlecibuild| image:: https://circleci.com/gh/jpalpant/rnaseqflow.png?style=shield
+.. _circlecibuild: https://circleci.com/gh/jpalpant/rnaseqflow/tree/master
 
-See the lastest build status on `CircleCI <https://circleci.com/gh/jpalpant/rnaseqflow/tree/master>`_
+TravisCI build status: |traviscibuild|_
+
+.. |traviscibuild| image:: https://travis-ci.org/jpalpant/rnaseqflow.svg?branch=master
+.. _traviscibuild: https://travis-ci.org/jpalpant/rnaseqflow
 
 Complete documentation available on `Read the Docs <https://rnaseqflow.readthedocs.org>`_
 
