@@ -294,8 +294,11 @@ class MergeSplitFiles(WorkflowStage):
                 for j, infile in enumerate(files):
                     if j + 1 != self._get_part_num(infile):
                         self.logger.error(
-                            'Part {0:03d} not found, terminating construction'
-                            ' of {1}'.format(j, outfile_path))
+                            '{0} is not file {1} of {2}.  Files must be out of'
+                            ' order, or there are extra files in the root '
+                            'folder that the merger cannot process.  '
+                            'Construction of file {2} is '
+                            'terminated'.format(infile, j+1, outfile_path))
                         break
 
                     self.logger.debug(
@@ -611,6 +614,9 @@ class FastQMCFTrimPairs(WorkflowStage):
                         prog_count - 1, prog_count, len(stage_input), outfile_path_1, outfile_path_2))
 
                 self.logger.debug('Calling %s', str(cmd))
+
+                trimmed_files.add(outfile_path_1)
+                trimmed_files.add(outfile_path_2)
             else:
                 cmd = [self.executable, self.adapters, f1] + \
                     self.fastq_args.split() + ['-o', outfile_path_1]
@@ -619,6 +625,8 @@ class FastQMCFTrimPairs(WorkflowStage):
                     'Building file {0:d} of {1:d}: {2}'.format(
                         prog_count, len(stage_input), outfile_path_1))
 
+                trimmed_files.add(outfile_path_1)
+
             self.logger.debug('Calling %s', str(cmd))
 
             if self.quiet:
@@ -626,9 +634,6 @@ class FastQMCFTrimPairs(WorkflowStage):
                     subprocess.call(cmd, stdout=nullfile, stderr=nullfile)
             else:
                 subprocess.call(cmd)
-
-            trimmed_files.add(outfile_path_1)
-            trimmed_files.add(outfile_path_2)
 
         self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
 
@@ -650,10 +655,14 @@ class FastQMCFTrimPairs(WorkflowStage):
         pairs = set()
 
         for f in files:
-            pair = next(f2 for f2 in files if (
-                self._get_sequence_id(f2) == self._get_sequence_id(f) and
-                f2 != f))
-            pairs.add(tuple(fn for fn in sorted([f, pair])))
+            try:
+                pair = next(f2 for f2 in files if (
+                    self._get_sequence_id(f2) == self._get_sequence_id(f) and
+                    f2 != f))
+            except StopIteration as e:
+                pairs.add((f, None))
+            else:
+                pairs.add(tuple(fn for fn in sorted([f, pair])))
 
         return pairs
 
