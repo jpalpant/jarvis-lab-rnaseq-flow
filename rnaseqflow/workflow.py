@@ -650,10 +650,14 @@ class FastQMCFTrimPairs(WorkflowStage):
         pairs = set()
 
         for f in files:
-            pair = next(f2 for f2 in files if (
-                self._get_sequence_id(f2) == self._get_sequence_id(f) and
-                f2 != f))
-            pairs.add(tuple(fn for fn in sorted([f, pair])))
+            try:
+                pair = next(f2 for f2 in files if (
+                    self._get_sequence_id(f2) == self._get_sequence_id(f) and
+                    f2 != f))
+            except StopIteration as e:
+                pairs.add((f, None))
+            else:
+                pairs.add(tuple(fn for fn in sorted([f, pair])))
 
         return pairs
 
