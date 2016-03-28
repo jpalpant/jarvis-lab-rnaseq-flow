@@ -611,6 +611,9 @@ class FastQMCFTrimPairs(WorkflowStage):
                         prog_count - 1, prog_count, len(stage_input), outfile_path_1, outfile_path_2))
 
                 self.logger.debug('Calling %s', str(cmd))
+
+                trimmed_files.add(outfile_path_1)
+                trimmed_files.add(outfile_path_2)
             else:
                 cmd = [self.executable, self.adapters, f1] + \
                     self.fastq_args.split() + ['-o', outfile_path_1]
@@ -619,6 +622,8 @@ class FastQMCFTrimPairs(WorkflowStage):
                     'Building file {0:d} of {1:d}: {2}'.format(
                         prog_count, len(stage_input), outfile_path_1))
 
+                trimmed_files.add(outfile_path_1)
+
             self.logger.debug('Calling %s', str(cmd))
 
             if self.quiet:
@@ -626,9 +631,6 @@ class FastQMCFTrimPairs(WorkflowStage):
                     subprocess.call(cmd, stdout=nullfile, stderr=nullfile)
             else:
                 subprocess.call(cmd)
-
-            trimmed_files.add(outfile_path_1)
-            trimmed_files.add(outfile_path_2)
 
         self.logger.info('Trimmed {0} files'.format(len(trimmed_files)))
 
