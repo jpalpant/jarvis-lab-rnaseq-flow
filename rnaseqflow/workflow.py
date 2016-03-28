@@ -294,8 +294,11 @@ class MergeSplitFiles(WorkflowStage):
                 for j, infile in enumerate(files):
                     if j + 1 != self._get_part_num(infile):
                         self.logger.error(
-                            'Part {0:03d} not found, terminating construction'
-                            ' of {1}'.format(j, outfile_path))
+                            '{0} is not file {1} of {2}.  Files must be out of'
+                            ' order, or there are extra files in the root '
+                            'folder that the merger cannot process.  '
+                            'Construction of file {2} is '
+                            'terminated'.format(infile, j+1, outfile_path))
                         break
 
                     self.logger.debug(
