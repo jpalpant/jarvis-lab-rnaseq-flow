@@ -42,7 +42,7 @@ def opts():
 
     parser.add_argument(
         '--version',
-        action='version', version='%(prog)s 0.2.1')
+        action='version', version='%(prog)s 0.2.2')
 
     parser.add_argument(
         '--stages', nargs='*',
